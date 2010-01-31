@@ -1,6 +1,6 @@
-#summary One-sentence summary of this page.
+#summary A main page to describe the tutorial book information of the analog course
 #labels TutorialBook
-A main page to describe the tutorial book information of the analog course
+
 = Introduction =
 
 The Book's Name is *"Analog Integrated Circuit Design" by David A. Johns, Ken Martin*
