@@ -1,5 +1,4 @@
-#summary One-sentence summary of this page.
-A List of default formula which needs hard code into the tool
+#summary A List of default formula which needs hard code into the tool
 = Formula List =
 
 * Threshold voltage formula with body-biasing effect
