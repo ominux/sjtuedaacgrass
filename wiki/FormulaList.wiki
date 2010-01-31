@@ -1,0 +1,31 @@
+#summary One-sentence summary of this page.
+A List of default formula which needs hard code into the tool
+= Formula List =
+
+* Threshold voltage formula with body-biasing effect
+     V,,t,,=V,,t0,, + γ(sqrt(|(-2)φ,,F,,+V,,SB,,|)-sqrt(|2φ,,F,,|))
+
+* NMOSFET Resistive Operation Current Formula
+     I,,D,,=μ,,n,,C,,ox,,(W/L)((V,,GS,,-V,,T,,)V,,DS,,-V^2^,,DS,,/2)
+           =k',,n,,(W/L)((V,,GS,,-V,,T,,)V,,DS,,-V^2^,,DS,,/2)
+           =k((V,,GS,,-V,,T,,)V,,DS,,-V^2^,,DS,,/2)
+
+* NMOSFET Saturation Region Current Formula
+     I,,D,,=k',,n,,(W/2L)(V,,GS,,-V,,T,,)^2^
+
+* NMOSFET Velocity Saturation Current Formula
+     I,,D,,=μ,,n,,C,,ox,,(W/L)((V,,GS,,-V,,T,,)V,,DSAT,,-V^2^,,DSAT,,/2)
+
+* NMOSFET Unified Current Formula
+     I,,D,,=k',,n,,(W/L)(V,,GT,,V,,min,,-V^2^,,min,,/2)(1+λV,,DS,,) for V,,GT,,≥0
+           with V,,min,,=min(V,,GT,,,V,,DS,,,V,,DSAT,,)
+
+* Small Signal Under Working Area Formula
+     g,,m,,=μ,,n,,C,,ox,,(W/L)(V,,GS,,-V,,T,,)
+           =sqrt(2μ,,n,,C,,ox,,(W/L)I,,D,,)
+           =2I,,D,,/(V,,GS,,-V,,T,,)
+
+* Resistor Drain to Source Formula
+     r,,ds,,=1/(λI,,D,,)
+
+...
