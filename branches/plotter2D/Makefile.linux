@@ -1,6 +1,5 @@
-# Top Makefile for Qt 4 projects on windows NT (32 bit)
-# with MinGW
-MAKE := mingw32-make
+# Top Makefile for Qt 4 projects on Linux
+# with g++ version > 4.1
 QMAKE := qmake
 # Qt4 Makefile
 MAKEFILE_QT = Makefile.qt
@@ -18,7 +17,7 @@ release: qt
 
 qt: 
 	$(QMAKE) -project
-	$(QMAKE) -win32 -o $(MAKEFILE_QT)
+	$(QMAKE) -o $(MAKEFILE_QT)
 
 clean:
 	$(MAKE) -f$(MAKEFILE_QT) $@
