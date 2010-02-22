@@ -1,17 +1,20 @@
 #include "render_area.h"
 #include <QtGui>
 
-RenderArea::RenderArea(QWidget *parent) : QWidget(parent)
+RenderArea::
+RenderArea(QWidget *parent) : QWidget(parent)
 {
 	setBackgroundRole(QPalette::Base);
 	setAutoFillBackground(true);
 }
 
-RenderArea::~RenderArea()
+RenderArea::
+~RenderArea()
 { /* Qt will free all memory. */ }
 
 // unit test for 2D painting
-void RenderArea::paintEvent(QPaintEvent* /* event */)
+void RenderArea::
+paintEvent(QPaintEvent* /* event */)
 {
 	QPainterPath path;
 	path.moveTo(20, 80);

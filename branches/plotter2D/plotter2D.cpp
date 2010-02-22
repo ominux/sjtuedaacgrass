@@ -1,7 +1,12 @@
 #include "plotter2D.h"
+
+#include "render_area.h"
+#include "plotter.h"
+
 #include <QtGui>
 
-Plotter2D::Plotter2D() : form(new QWidget)
+Plotter2D::
+Plotter2D() : form(new QWidget)
 {
 	// setup top widget
 	setupUi(form);
@@ -24,10 +29,12 @@ Plotter2D::Plotter2D() : form(new QWidget)
 	verticalLayout_tab_2->addWidget(plotter);
 }
 
-Plotter2D::~Plotter2D()
+Plotter2D::
+~Plotter2D()
 { /* Qt will free all memory. */ }
 
-void Plotter2D::loadData(const QString &fileName)
+void Plotter2D::
+loadData(const QString &fileName)
 {
 	QVector<QPointF> data[Plotter::CURVES]; // buffer of curves on render area
 	// Magic numbers associated to in1.txt start
@@ -58,11 +65,16 @@ void Plotter2D::loadData(const QString &fileName)
 		}
 	}
 
+	// settings with magic numbers associated to in1.txt
+	PlotSettings settings(0.0, 10.0, 17,
+												0.0, 10.0, 7);
+	settings.adjust();
 	for (int i = 0; i < Plotter::CURVES; ++i)
-		plotter->setCurveData(i, data[i]);
+		plotter->setCurveData(i, data[i], settings);
 }
 
-void Plotter2D::show() const
+void Plotter2D::
+show() const
 {
 	form->show();
 }

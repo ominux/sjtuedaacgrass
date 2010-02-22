@@ -17,9 +17,10 @@ public:
 	enum {CURVES = 6}; // curve buffer size
 
 	Plotter(QWidget *parent = 0);
-	void setPlotSettings(); // get init settings
 	void setPlotSettings(const PlotSettings &settings);
-	void setCurveData(int id, const QVector<QPointF> &data);
+	void setCurveData(int id,
+										const QVector<QPointF> &data,
+									 	const PlotSettings &settings);
 	void clearCurve(int id);
 	QSize minimumSizeHint() const;
 	QSize sizeHint() const;
@@ -52,19 +53,25 @@ private:
 	int curZoom;
 	bool rubberBandIsShown;
 	QRect rubberBandRect;
-	QPixmap pixmap;
+	QPixmap pixmap; //!< render area buffer
 };
 
 class PlotSettings
 {
 public:
 	PlotSettings();
+	PlotSettings(double minX, double MaxX, int numXTicks,
+							 double minY, double MaxY, int numYTicks);
+	PlotSettings(const PlotSettings &settings);
+	~PlotSettings();
 
+	PlotSettings &operator=(const PlotSettings &settings);
+	double spanX() const;
+	double spanY() const;
 	void scroll(int dx, int dy);
 	void adjust();
-	double spanX() const { return maxX - minX; }
-	double spanY() const { return maxY - minY; }
 
+public:
 	double minX;
 	double maxX;
 	int numXTicks;

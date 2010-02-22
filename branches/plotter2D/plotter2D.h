@@ -1,9 +1,13 @@
 #ifndef PLOTTER2D_H
 #define PLOTTER2D_H
 
-#include "render_area.h"
 #include "ui_plotter2D.h"
-#include "plotter.h"
+
+class QString;
+class QWidget;
+class RenderArea;
+class QVBoxLayout;
+class Plotter;
 
 class Plotter2D : public Ui::FormPlotter2D
 {
