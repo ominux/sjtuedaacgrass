@@ -17,7 +17,7 @@ release: qt
 
 qt: 
 	$(QMAKE) -project
-	$(QMAKE) -o $(MAKEFILE_QT)
+	$(QMAKE) -unix -o $(MAKEFILE_QT)
 
 clean:
 	$(MAKE) -f$(MAKEFILE_QT) $@
