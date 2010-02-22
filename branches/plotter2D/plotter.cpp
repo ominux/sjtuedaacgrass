@@ -24,7 +24,20 @@ Plotter::Plotter(QWidget *parent) :
 	zoomOutButton->adjustSize();
 	connect(zoomOutButton, SIGNAL(clicked()), this, SLOT(zoomOut()));
 
-	setPlotSettings(PlotSettings());
+	setPlotSettings(); // get init settings
+}
+
+void Plotter::setPlotSettings()
+{
+	PlotSettings settings;
+	settings.adjust();
+
+	zoomStack.clear();
+	zoomStack.append(settings);
+	curZoom = 0;
+	zoomInButton->hide();
+	zoomOutButton->hide();
+	refreshPixmap();
 }
 
 void Plotter::setPlotSettings(const PlotSettings &settings)
@@ -142,6 +155,7 @@ void Plotter::mouseReleaseEvent(QMouseEvent *event)
 		unsetCursor();
 
 		QRect rect = rubberBandRect.normalized();
+		// ignore rect whose area is smaller than 4x4
 		if (rect.width() < 4 || rect.height() < 4)
 			return;
 		rect.translate(-Margin, -Margin);
@@ -268,17 +282,15 @@ void Plotter::drawGrid(QPainter *painter)
 
 void Plotter::drawCurves(QPainter *painter)
 {
-	static const QColor colorForIds[6] = {
+	static const QColor colorForIds[CURVES] = {
 		Qt::red, Qt::green, Qt::blue, Qt::cyan, Qt::magenta, Qt::yellow
 	};
 	PlotSettings settings = zoomStack[curZoom];
-	QRect rect(Margin, Margin,
-						 width() - 2 * Margin, height() - 2 * Margin);
+	QRect rect(Margin, Margin, width() - 2 * Margin, height() - 2 * Margin);
 	if (!rect.isValid())
 		return;
 
 	painter->setClipRect(rect.adjusted(+1, +1, -1, -1));
-
 	QMapIterator<int, QVector<QPointF> > i(curveMap);
 	while (i.hasNext()) {
 		i.next();
@@ -296,20 +308,21 @@ void Plotter::drawCurves(QPainter *painter)
 																	/ settings.spanY());
 			polyline[j] = QPointF(x, y);
 		}
-		painter->setPen(colorForIds[uint(id) % 6]);
+		painter->setPen(colorForIds[uint(id) % CURVES]);
 		painter->drawPolyline(polyline);
 	}
 }
 
 PlotSettings::PlotSettings()
 {
+	// magic numbers
 	minX = 0.0;
 	maxX = 10.0;
-	numXTicks = 5;
+	numXTicks = 17;
 
 	minY = 0.0;
 	maxY = 10.0;
-	numYTicks = 5;
+	numYTicks = 5; // differenet number of ticks to test adjustAxis()
 }
 
 void PlotSettings::scroll(int dx, int dy)
@@ -329,10 +342,9 @@ void PlotSettings::adjust()
 	adjustAxis(minY, maxY, numYTicks);
 }
 
-void PlotSettings::adjustAxis(double &min, double &max,
-															int &numTicks)
+void PlotSettings::adjustAxis(double &min, double &max, int &numTicks)
 {
-	const int MinTicks = 4;
+	const int MinTicks = numTicks;
 	double grossStep = (max - min) / MinTicks;
 	double step = pow(10.0, floor(log10(grossStep)));
 

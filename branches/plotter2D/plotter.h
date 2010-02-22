@@ -14,8 +14,10 @@ class Plotter : public QWidget
 	Q_OBJECT
 
 public:
-	Plotter(QWidget *parent = 0);
+	enum {CURVES = 6}; // curve buffer size
 
+	Plotter(QWidget *parent = 0);
+	void setPlotSettings(); // get init settings
 	void setPlotSettings(const PlotSettings &settings);
 	void setCurveData(int id, const QVector<QPointF> &data);
 	void clearCurve(int id);
