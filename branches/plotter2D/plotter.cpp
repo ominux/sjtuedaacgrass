@@ -373,7 +373,8 @@ void Plotter::
 drawCurves(QPainter *painter)
 {
 	static const QColor colorForIds[CURVES] = {
-		Qt::red, Qt::green, Qt::blue, Qt::cyan, Qt::magenta, Qt::yellow
+		// Qt::red, Qt::green, Qt::blue, Qt::cyan, Qt::magenta, Qt::yellow
+		Qt::red, Qt::green, Qt::blue, Qt::cyan
 	};
 	PlotSettings settings(zoomStack[curZoom]);
 	/*!

@@ -8,9 +8,10 @@ class RenderArea : public QWidget
 {
 	Q_OBJECT
 public:
-	RenderArea(QWidget *parent = 0);
-	virtual ~RenderArea();
+	RenderArea(QWidget *parent = 0); //!< default constructor
+	virtual ~RenderArea(); //!< destructor
 
+	//! event handlers
 protected:
 		void paintEvent(QPaintEvent* /*event*/);
 

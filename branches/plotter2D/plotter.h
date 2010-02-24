@@ -32,7 +32,7 @@ class Plotter : public QWidget
 
 public:
 	enum {
-		CURVES = 6 //!< size of the buffer which contains all curves
+		CURVES = 4 //!< size of the buffer which contains all curves
 	};
 
 	//! default constructor
@@ -193,9 +193,12 @@ public:
 	int numYTicks; //!< minimum value of all y
 
 private:
-	//! converts its min and max parameters into "nice" numbers and sets its
- 	//! numTicks parameter to the number of ticks it calculates to be appropriate
- 	//! for the given [min, max] range
+	//! Determine an appropriate value for the interval between two ticks (the "step")
+	/*!
+		Converts its min and max parameters into "nice" numbers and sets its
+		numTicks parameter to the number of ticks it calculates to be appropriate
+	 	for the given [min, max] range.
+	 */
 	static void adjustAxis(double &min, double &max, int &numTicks);
 };
 
