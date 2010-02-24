@@ -2,6 +2,7 @@
 #include "plotter.h"
 
 #include <QtGui>
+#include <limits>
 #include <cmath>
 
 using namespace std;
@@ -110,11 +111,52 @@ zoomIn()
 }
 
 void Plotter::
-setCurveData(int id, const QVector<QPointF> &data, const PlotSettings &settings)
+setCurveData(const QString &fileName)
 {
+	QFile file(fileName);
+	if (!file.open(QIODevice::ReadOnly)) 
+		return; // fail to open the data file
+	QTextStream in(&file);
+	if (in.atEnd())
+		return;
+	// clean up obsolete data
+	curveMap.clear(); // clear obsolete curves
+	zoomStack.clear(); // clear zoom stack
+	curZoom = 0; // reset zoom status
+	// Initialize minY and maxY with +INF and -INF respectively
+	// so that they can always be updated.
+	double minY = +numeric_limits<double>::max();
+ 	double maxY = -numeric_limits<double>::max();
+	double numColumns = 2; // each line has at least 2 items (i.e. x and y)
+	while (!in.atEnd()) {
+		QString line(in.readLine());
+		// row format of data file (the ith row):
+	 	// xi yi1 yi2 ... yiN
+		QStringList coords(line.split(' ', QString::SkipEmptyParts));
+		if (coords.size() < numColumns)
+			continue; // ignore imcomplete or empty lines
+		else if (curveMap.isEmpty())
+			numColumns = coords.size();
+		double x = coords[0].toDouble();
+		for (QStringList::size_type i = 1; i != coords.size(); ++i) {
+			double y = coords[i].toDouble();
+			curveMap[i-1].append(QPointF(x, y)); // save current point
+			// find the minX and maxY among all curves
+			if (y < minY)
+				minY = y;
+			else if (y > maxY)
+				maxY = y;
+		}
+	}
+	file.close();
+	// create new plot settings for current data
+	const double minX = curveMap[0].first().x();
+	const double maxX = curveMap[0].last().x();
+	PlotSettings settings(minX, maxX, defaultNumXTicks,
+												minY, maxY, defaultNumYTicks);
+	settings.adjust(); // find more sensible settings
 	setPlotSettings(settings);
-	curveMap[id] = data;
-	refreshPixmap();
+	refreshPixmap(); // refresh render area
 }
 
 void Plotter::
@@ -488,7 +530,8 @@ adjust()
 void PlotSettings::
 adjustAxis(double &min, double &max, int &numTicks)
 {
-	const int MinTicks = numTicks;
+	// a constant minimum number of ticks is important for the sake of stability
+	static const int MinTicks = 5;
 	double grossStep = (max - min) / MinTicks;
 	double step = pow(10.0, floor(log10(grossStep)));
 

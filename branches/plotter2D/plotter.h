@@ -42,15 +42,13 @@ public:
 	//! The setPlotSettings() function is used to specify the PlotSettings to use
 	//! for displaying the plot.
 	void setPlotSettings(const PlotSettings &settings);
-	//! The setCurveData() function sets the curve data for a given curve ID.
+	//! The setCurveData() function sets the curve data
 	/*!
 	 	If a curve with the same ID already exists in curveMap, it is replaced with
 	 	the new curve data; otherwise, the new curve is simply inserted.
 		\sa curveMap, refreshPixmap().
 	 */
-	void setCurveData(int id,
-										const QVector<QPointF> &data,
-									 	const PlotSettings &settings);
+	void setCurveData(const QString &fileName);
 	//! The clearCurve() function removes the specified curve from the curve map.
 	//! \sa curveMap, refreshPixmap().
 	void clearCurve(int id);
@@ -154,6 +152,9 @@ private:
 		then the buffer is copied onto the widget (i.e. double buffering).
 	 */
 	QPixmap pixmap; 
+	//! default number of ticks
+	static const int defaultNumXTicks = 9; 
+	static const int defaultNumYTicks = 7; 
 };
 
 //! The PlotSettings class specifies the range of the x- and y-axes and 

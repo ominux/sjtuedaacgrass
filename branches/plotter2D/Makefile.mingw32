@@ -2,6 +2,7 @@
 # with MinGW
 MAKE := mingw32-make
 QMAKE := qmake
+QFLAGS := -win32
 # Qt4 Makefile
 MAKEFILE_QT = Makefile.qt
 PROJECT_QT = plotter2D.pro
@@ -11,15 +12,15 @@ PROJECT_QT = plotter2D.pro
 all: qt
 	$(MAKE) -f$(MAKEFILE_QT) -j2
 
-debug: qt
+debug:
 	$(MAKE) $@ -f$(MAKEFILE_QT) -j2
 
-release: qt
+release:
 	$(MAKE) $@ -f$(MAKEFILE_QT) -j2
 
 qt: 
 	$(QMAKE) -project -o $(PROJECT_QT)
-	$(QMAKE) -win32 $(PROJECT_QT) -o $(MAKEFILE_QT)
+	$(QMAKE) $(QFLAGS) $(PROJECT_QT) -o $(MAKEFILE_QT)
 
 clean:
 	$(MAKE) -f$(MAKEFILE_QT) $@
