@@ -154,7 +154,7 @@ private:
 	QPixmap pixmap; 
 	//! default number of ticks
 	static const int defaultNumXTicks = 9; 
-	static const int defaultNumYTicks = 7; 
+	static const int defaultNumYTicks = 5; 
 };
 
 //! The PlotSettings class specifies the range of the x- and y-axes and 
