@@ -11,7 +11,8 @@
 class QToolButton;
 class PlotSettings;
 
-//! The Plotter widget displays one or more curves specified as vectors of coordinates.
+//! The Plotter widget displays one or more curves specified as vectors of
+//! coordinates.
 /*!
  	The user can draw a rubber band on the image, and the Plotter will zoom in
 	on the area enclosed by the rubber band. The user draws the rubber band by
@@ -93,7 +94,8 @@ protected:
 	 */
 	void paintEvent(QPaintEvent *event);
 	//! Whenever the Plotter widget is resized, Qt generates a "resize" event.
-	//! Qt always generates a resize event before a widget is shown for the first time.
+	//! Qt always generates a resize event before a widget is shown for the first
+ 	//! time.
 	void resizeEvent(QResizeEvent *event);
 	//! When the user presses the left mouse button, display a rubber band.
 	/*!
@@ -194,7 +196,7 @@ public:
 	int numYTicks; //!< minimum value of all y
 
 private:
-	//! Determine an appropriate value for the interval between two ticks (the "step")
+	//! Determine an appropriate value for the interval between two ticks
 	/*!
 		Converts its min and max parameters into "nice" numbers and sets its
 		numTicks parameter to the number of ticks it calculates to be appropriate

@@ -3,29 +3,30 @@
 QMAKE := qmake
 QPROJECTFLAGS := -project
 QMAKEFILEFLAGS := -unix -Wall
+QMAKEFILEFLAGS := -makefile -unix -Wall
 # Qt4 Makefile
 MAKEFILE_QT = Makefile.qt
 PROJECT_QT = plotter2D.pro
 
 .PHONY: qt debug release clean distclean
 
-all: qt
-	$(MAKE) -f$(MAKEFILE_QT) -j2
+all: $(MAKEFILE_QT)
+	$(MAKE) -f $< -j2
 
-debug:
-	$(MAKE) $@ -f$(MAKEFILE_QT) -j2
+debug: $(MAKEFILE_QT)
+	$(MAKE) $@ -f $< -j2
 
-release:
-	$(MAKE) $@ -f$(MAKEFILE_QT) -j2
+release: $(MAKEFILE_QT)
+	$(MAKE) $@ -f $< -j2
 
-qt: 
-	$(QMAKE) $(QPROJECTFLAGS) -o $(PROJECT_QT)
-	$(QMAKE) $(QMAKEFILEFLAGS) $(PROJECT_QT) -o $(MAKEFILE_QT)
+$(MAKEFILE_QT): $(PROJECT_QT)
+	$(QMAKE) $(QMAKEFILEFLAGS) $< -o $@
 
-clean:
-	$(MAKE) -f$(MAKEFILE_QT) $@
-	$(RM) $(MAKEFILE_QT)
+$(PROJETCT_QT): qt
+	$(QMAKE) $(QPROJECTFLAGS) -o $@
 
-distclean:
-	$(MAKE) -f$(MAKEFILE_QT) $@
-	$(RM) $(MAKEFILE_QT)
+clean: $(MAKEFILE_QT)
+	$(MAKE) -f $(MAKEFILE_QT) $@
+
+distclean: $(MAKEFILE_QT)
+	$(MAKE) -f $(MAKEFILE_QT) $@
