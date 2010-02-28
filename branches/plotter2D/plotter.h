@@ -1,6 +1,8 @@
 // Reference: C++ GUI Programming with Qt 4, Chapter 5, Double Buffering
-#ifndef PLOTTER_H
-#define PLOTTER_H
+#ifndef _PLOTTER_H_
+#define _PLOTTER_H_
+
+#include "complex.h"
 
 #include <QMap>
 #include <QPixmap>
@@ -10,6 +12,8 @@
 //! forward declaration
 class QToolButton;
 class PlotSettings;
+class Analyser; //!< symbolic analyser
+class SymbolicSimSettings; //!< settings for symbolic analyser sampling
 
 //! The Plotter widget displays one or more curves specified as vectors of
 //! coordinates.
@@ -33,6 +37,8 @@ class Plotter : public QWidget
 
 public:
 	enum {
+		MAGNITUDE, //!< data processing flag: magnitude curve
+		PHASE,     //!< data processing flag: phase curve
 		CURVES = 4 //!< size of the buffer which contains all curves
 	};
 
@@ -43,7 +49,7 @@ public:
 	//! The setPlotSettings() function is used to specify the PlotSettings to use
 	//! for displaying the plot.
 	void setPlotSettings(const PlotSettings &settings);
-	//! The setCurveData() function sets the curve data
+	//! The setCurveData() function loads the curve data
 	/*!
 	 	If a curve with the same ID already exists in curveMap, it is replaced with
 	 	the new curve data; otherwise, the new curve is simply inserted.
@@ -61,6 +67,11 @@ public:
 	//! \sa minimumSizeHint().
 	QSize sizeHint() const;
 
+	//! Set curve data using symbolic analyser.
+	//! \param func is used to evaluate magnitude or phase from a complex function.
+	void setSymbolicAnalyser(Analyser *symbolicAnalyser,
+													 const SymbolicSimSettings *sssetting,
+													 const int curve_type); 
 public slots:
 	//!	Zoom out if the graph is zoomed in.
 	/*!
@@ -205,4 +216,4 @@ private:
 	static void adjustAxis(double &min, double &max, int &numTicks);
 };
 
-#endif
+#endif // _PLOTTER_H_

@@ -1,5 +1,6 @@
 # Top Makefile for Qt 4 projects on windows NT (32 bit)
 # with MinGW
+RM := del
 MAKE := mingw32-make
 QMAKE := qmake
 QPROJECTFLAGS := -project
@@ -22,8 +23,9 @@ release: $(MAKEFILE_QT)
 $(MAKEFILE_QT): $(PROJECT_QT)
 	$(QMAKE) $(QMAKEFILEFLAGS) $< -o $@
 
-$(PROJETCT_QT): qt
-	$(QMAKE) $(QPROJECTFLAGS) -o $@
+$(PROJECT_QT): qt
+	-$(RM) $(PROJECT_QT)
+	$(QMAKE) $(QPROJECTFLAGS) -o $(PROJECT_QT)
 
 clean: $(MAKEFILE_QT)
 	$(MAKE) -f $(MAKEFILE_QT) $@

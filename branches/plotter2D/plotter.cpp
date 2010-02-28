@@ -1,14 +1,17 @@
 // Reference: C++ GUI Programming with Qt 4, Chapter 5, Double Buffering
 #include "plotter.h"
+#include "plotter2D.h"
+
+#include "analyser.h"
 
 #include <QtGui>
+
+#include <iostream>
 #include <limits>
 #include <cmath>
 
-using namespace std;
 
-Plotter::
-Plotter(QWidget *parent) :
+Plotter::Plotter(QWidget *parent) :
  	QWidget(parent), zoomOutButton(0), zoomInButton(0),
 	curZoom(0), rubberBandIsShown(false)
 {
@@ -125,8 +128,8 @@ setCurveData(const QString &fileName)
 	curZoom = 0; // reset zoom status
 	// Initialize minY and maxY with +INF and -INF respectively
 	// so that they can always be updated.
-	double minY = +numeric_limits<double>::max();
- 	double maxY = -numeric_limits<double>::max();
+	double minY = +std::numeric_limits<double>::max();
+ 	double maxY = -std::numeric_limits<double>::max();
 	double numColumns = 2; // each line has at least 2 items (i.e. x and y)
 	while (!in.atEnd()) {
 		QString line(in.readLine());
@@ -142,10 +145,8 @@ setCurveData(const QString &fileName)
 			double y = coords[i].toDouble();
 			curveMap[i-1].append(QPointF(x, y)); // save current point
 			// find the minX and maxY among all curves
-			if (y < minY)
-				minY = y;
-			else if (y > maxY)
-				maxY = y;
+			if (y < minY) minY = y;
+			if (maxY < y) maxY = y;
 		}
 	}
 	file.close();
@@ -156,6 +157,52 @@ setCurveData(const QString &fileName)
 												minY, maxY, defaultNumYTicks);
 	settings.adjust(); // find more sensible settings
 	setPlotSettings(settings);
+	refreshPixmap(); // refresh render area
+}
+
+void Plotter::
+setSymbolicAnalyser(Analyser *symbolicAnalyser,
+										const SymbolicSimSettings *sssetting,
+										const int curve_type)
+{
+	if (!symbolicAnalyser)
+	{
+		std::cerr << "Null Analyser pointer: symbolicAnalyser" << std::endl;
+	 	return;
+	}
+	else if (!sssetting)
+	{
+		std::cerr << "Null SymbolicSimSettings pointer: sssetting" << std::endl;
+		return;
+	}
+	curveMap.clear(); // clear obsolete curves
+	const double log10minX = std::log10(sssetting->startFreq);
+	const double log10maxX = std::log10(sssetting->stopFreq);
+	const double log10step =
+		(log10maxX - log10minX) / sssetting->numSamples;
+	// pointer to member function
+	double (Complex::*pmfunc) () const =
+	 	curve_type == MAGNITUDE ? &Complex::mag : &Complex::arg;
+	double log10x = log10minX;
+	double y = (symbolicAnalyser->tf(pow(10, log10x)).*pmfunc)();
+	curveMap[0].append(QPointF(log10x, y)); // save first point
+	double minY = y;
+ 	double maxY = y;
+	for (int i = 1; i < sssetting->numSamples; ++i) {
+		log10x += log10step;
+		y = (symbolicAnalyser->tf(pow(10, log10x)).*pmfunc)();
+		curveMap[0].append(QPointF(log10x, y)); // save current point
+		// find the minX and maxY
+		if (y < minY)
+			minY = y;
+		else if (y > maxY)
+			maxY = y;
+	}
+	// create new plot settings for current data
+	PlotSettings settings(log10minX, log10maxX, defaultNumXTicks,
+												minY, maxY, defaultNumYTicks);
+	settings.adjust(); // find more sensible settings
+	setPlotSettings(settings); // reset plot settings
 	refreshPixmap(); // refresh render area
 }
 
@@ -367,15 +414,16 @@ drawGrid(QPainter *painter)
 		return;
 
 	PlotSettings settings = zoomStack[curZoom];
-	QPen quiteDark = palette().dark().color().light();
+	// QPen quiteDark = palette().dark().color().light();
 	QPen light = palette().light().color();
+	QPen grid(QBrush(Qt::lightGray), 0, Qt::DashLine);
 	// draw the grid's vertical lines and the ticks along the x-axis
 	for (int i = 0; i <= settings.numXTicks; ++i) {
 		int x = rect.left() + (i * (rect.width() - 1)
 													 / settings.numXTicks);
 		double label = settings.minX + (i * settings.spanX()
 																		/ settings.numXTicks);
-		painter->setPen(quiteDark);
+		painter->setPen(grid);
 		painter->drawLine(x, rect.top(), x, rect.bottom());
 		painter->setPen(light);
 		painter->drawLine(x, rect.bottom(), x, rect.bottom() + 5);
@@ -399,7 +447,7 @@ drawGrid(QPainter *painter)
 														 / settings.numYTicks);
 		double label = settings.minY + (j * settings.spanY()
 																		/ settings.numYTicks);
-		painter->setPen(quiteDark);
+		painter->setPen(grid);
 		painter->drawLine(rect.left(), y, rect.right(), y);
 		painter->setPen(light);
 		painter->drawLine(rect.left() - 5, y, rect.left(), y);
@@ -467,7 +515,18 @@ PlotSettings(double minX, double maxX, int numXTicks,
 						 double minY, double maxY, int numYTicks) :
 	minX(minX), maxX(maxX), numXTicks(numXTicks),
 	minY(minY), maxY(maxY), numYTicks(numYTicks)
-{}
+{
+	if (maxX < minX) {
+		double t = maxX;
+		maxX = minX;
+		minX = t;
+	}
+	if (maxY < minY) {
+		double t = maxY;
+		maxY = minY;
+		minY = t;
+	}
+}
 
 // copy constructor
 PlotSettings::

@@ -1,11 +1,14 @@
 #include "plotter2D.h"
 
 #include "plotter.h"
+#include "analyser.h"
 
 #include <QtGui>
 
+#include <iostream>
+
 Plotter2D::
-Plotter2D() : form(new QWidget)
+Plotter2D() : form(new QWidget), symbolicAnalyser(0)
 {
 	//! setup top widget
 	setupUi(form);
@@ -30,22 +33,66 @@ Plotter2D() : form(new QWidget)
 
 Plotter2D::
 ~Plotter2D()
-{ /* Qt will free all memory. */ }
+{
+	symbolicAnalyser = 0;
+}
 
 void Plotter2D::
 loadData(const QString &fileName)
 {
-	plotter[MAGNITUDE]->setCurveData(fileName);
-	plotter[PHASE]->setCurveData(fileName);
+	// plotter[MAGNITUDE]->setCurveData(fileName);
+	// plotter[PHASE]->setCurveData(fileName);
 	plotter_tab_2->setCurveData(fileName);
 }
 
 void Plotter2D::
-loadData(const Analyser *)
-{}
+loadData(Analyser *analyser)
+{
+	symbolicAnalyser = analyser;
+	symbolicAnalyser->evaluate_tf_coeff();
+	// fixed symblic simulation settings for unit testing
+	SymbolicSimSettings sssettings(1, 10e6, 100);
+	// set and show current curves
+	plotter[MAGNITUDE]->setSymbolicAnalyser(symbolicAnalyser,
+																				 	&sssettings,
+																					Plotter::MAGNITUDE);
+	plotter[PHASE]->setSymbolicAnalyser(symbolicAnalyser,
+																			&sssettings,
+																			Plotter::PHASE);
+}
 
 void Plotter2D::
 show() const
 {
 	form->show();
 }
+
+SymbolicSimSettings::
+SymbolicSimSettings(double startf, double stopf, int samples) :
+		startFreq(startf), stopFreq(stopf), numSamples(samples)
+{
+	if (startFreq <= 0.0 || stopFreq <= 0.0)
+ 	{
+		std::cerr << "Frequency cannot be minus!"
+			<< "startFreq = " << startFreq << "; "
+			<< "stopFreq = " << stopFreq << std::endl;
+		startFreq = 1;
+		stopFreq = 1;
+		numSamples = 0; // numSamples <= 0 results in nothing plotted
+	}
+ 	else if (numSamples <= 0)
+ 	{
+		std::cerr << "Number of samples must be a positive integer!"
+			<< "numSamples = " << numSamples << std::endl;
+	}
+	else if (stopFreq < startFreq)
+	{
+		double f = stopFreq;
+		stopFreq = startFreq;
+		startFreq = f;
+	}
+}
+
+SymbolicSimSettings::
+~SymbolicSimSettings()
+{}

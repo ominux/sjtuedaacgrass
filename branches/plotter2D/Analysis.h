@@ -3,7 +3,6 @@
 #include "complex.h"
 #include<map>
 #include<string>
-#include<complex>
 
 /// A mimic of a symbolic analysis
 /**
@@ -25,6 +24,7 @@
  */
 class Analysis
 {
+	static Complex zs;
 	typedef Complex::value_type ValueType;
   /// Mathematical constant \f$\pi\f$.
   static const ValueType PI_;

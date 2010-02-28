@@ -1,5 +1,8 @@
 #include "Analysis.h"
 
+Complex Analysis::
+zs(1,2);
+
 const Analysis::ValueType Analysis::
 PI_ = 3.1415926535897932384626433832795028841971;
 
@@ -28,6 +31,7 @@ Complex
 Analysis::
 EvaluateSCoeffFreq(const ValueType freq) const
 {
+
   //! define s variable of the transfer function (TF), i.e. 0 + j * 2*pi*freq
   Complex s(0.0, 2.0 * PI_ * freq);
   return a0 / (b0 + b1 * s + b2 * s * s); //! H(s)
