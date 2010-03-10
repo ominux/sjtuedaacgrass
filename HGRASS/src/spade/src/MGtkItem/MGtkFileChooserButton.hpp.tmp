@@ -1,0 +1,70 @@
+#ifndef MGTK_FILECHOOSERBUTTON_H
+#define MGTK_FILECHOOSERBUTTON_H
+
+#include "../defs.h"
+extern "C"
+{
+	#include <stdio.h>
+//	#include <gtk/gtk.h>
+}
+
+#include <gtk/gtk.h>
+#include "MGtkItemBase.hpp"
+
+//CallBack Function Declarion
+//void MGtkDestroy(GtkWidget *widget, gpointer  data);
+void MGtkFileChooserButtonPressed(GtkWidget *widget, gpointer data);
+void MGtkFileChooserButtonReleased(GtkWidget *widget, gpointer data);
+void MGtkFileChooserButtonClicked(GtkWidget *widget, gpointer data);
+void MGtkFileChooserButtonEntered(GtkWidget *widget, gpointer data);
+void MGtkFileChooserButtonLeft(GtkWidget *widget, gpointer data);
+void MGtkFileChooserButtonDoubleClicked(GtkWidget *widget, gpointer data);
+void MGtkFileChooserButtonActivated(GtkWidget *widget, gpointer data);
+
+class MGtkFileChooserButton : public MGtkItemBase
+{
+protected:
+  bool mnemonic;
+  char* stock;
+  bool homoSpace; //true : equal Spcace | false : content Decided
+  int spacing;
+  bool expand;
+  bool fill;
+  int padding;
+  int seq;	//0 : follow Sequence | 1 : anti-
+#ifdef GTK2_4
+  float xAlign;
+  float yAlign;
+#endif
+#ifdef GTK2_6
+  GtkWidget* image;
+  GtkPositionType imagePosition;
+#endif
+  bool isValidEvent(MGtkEvent* pevent);
+public:
+  MGtkFileChooserButton():MGtkItemBase()
+  {
+    mnemonic = false;
+    stock = NULL;
+    homoSpace = false;
+    spacing = 0;
+    expand = false;
+    fill = false;
+    padding = 0;
+    seq = 0;
+#ifdef GTK2_4
+    xAlign = 0.5;
+    yAlign = 0.5;
+#endif
+#ifdef GTK2_6
+    image = NULL;
+    imagePosition = GTK_POS_LEFT;
+#endif
+    this->type = FILECHOOSERBUTTON;  
+  }
+  void getXmlNodeProperties(xmlNode* node);
+  void getXmlNodeEventProperties(xmlNode* node);
+  void genGtkGUI(void);
+};
+
+#endif

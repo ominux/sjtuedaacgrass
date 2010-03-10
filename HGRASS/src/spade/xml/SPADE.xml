@@ -1,0 +1,312 @@
+<?xml version="1.0"?>
+<GTK>
+  <Window label = "SPADE V1.0" size = "true" width = "480" height = "125" visibility = "true">
+    <Box homospace = "false" spaceing = "0" dir = "1" visibility = "true">
+      <MenuShell visibility = "true" expand = "false" fill = "false" padding = "0">
+	<Menu label = "File">
+	  <MenuShell>
+	    <Menu label = "Open..." responseEnable = "false">
+	      <Event name = "activate" handler = "MGtkMenuActive" data = "Open A File"/>
+	    </Menu>
+	    <Menu label = "Save Configuration" responseEnable = "false">
+	      <Event name = "activate" handler = "MGtkMenuActive" data = "Save The Configurations"/>
+	    </Menu>
+	    <Menu label = "Exit" responseEnable = "false">
+	      <Event name = "activate" handler = "MGtkMenuActive" data = "Exit HGRASS"/>
+	    </Menu>
+	  </MenuShell>
+        </Menu>
+	<Menu label = "Configuration">
+	  <MenuShell>
+	    <Menu label = "Options" responseEnable = "false">
+	      <Event name = "activate" handler = "MGtkMenuActive" data = "Set Options"/>
+	    </Menu>
+	    <Menu label = "Versions" responseEnable = "false">
+              <Event name = "activate" handler = "MGtkMenuActive" data = "Set Versions"/>
+	    </Menu>
+          </MenuShell>
+	</Menu>
+	<Menu label = "Tools">
+	  <MenuShell>
+	    <Menu label = "Schematic Editor" responseEnable = "false">
+	      <Event name = "activate" handler = "MGtkMenuActive" data = "Schematic Editor GUI"/>
+	    </Menu>
+	    <Menu label = "Parameter Extraction" responseEnable = "false">
+              <Event name = "activate" handler = "MGtkMenuActive" data = "Parameter Extraction Script"/>
+	    </Menu>
+	    <Menu label = "Editor" responseEnable = "false">
+	      <Event name = "activate" handler = "MGtkMenuActive" data = "Editor Popup"/>
+	    </Menu>
+	    <Menu label = "Simulator" responseEnable = "false">
+	      <Event name = "activate" handler = "MGtkMenuActive" data = "Simulator Run"/>
+	    </Menu>
+	    <Menu label = "GRASS" responseEnable = "false">
+	      <Event name = "activate" handler = "MGtkMenuActive" data = "GRASS Run"/>
+	    </Menu>
+          </MenuShell>
+	</Menu>
+	<Menu label = "Help">
+	  <MenuShell>
+	    <Menu label = "Help &amp; Support" responseEnable = "false">
+	      <Event name = "activate" handler = "MGtkMenuActive" data = "Help"/>
+	    </Menu>
+	    <Menu label = "About..." responseEnable = "false">
+              <Event name = "activate" handler = "MGtkMenuActive" data = "About"/>
+	    </Menu>
+	    <Menu label = "Contact Developer" responseEnable = "false">
+	      <Event name = "activate" handler = "MGtkMenuActive" data = "Contact Developer"/>
+	    </Menu>
+	    <Menu label = "Register" responseEnable = "false">
+	      <Event name = "activate" handler = "MGtkMenuActive" data = "Register"/>
+	    </Menu>
+          </MenuShell>
+	</Menu>
+      </MenuShell>
+      <ToolBar style = "Both" orientation = "H" expand = "false" fill = "false" padding = "0" borderWidth = "1">
+	<ToolItem label = "Formula" tip = "Formula Display GUI" icon = "src/spade/icons/formula.png" highlight_color = "red" responseEnable = "false">
+	  <Event name = "clicked" handler = "MGtkBarItemClicked" data = "formula"/>
+        </ToolItem>
+	<ToolItem label = "SEP"/>
+	<ToolItem label = "Schematic" tip = "Schematic Editor (Cadence ICFB Virtuoso)" icon = "src/spade/icons/se.png" highlight_color = "red">
+	  <Event name = "clicked" handler = "MGtkBarItemClicked" data = "schematic"/>
+        </ToolItem>
+	<ToolItem label = "Netlist" tip = "Netlist Operation" icon = "src/spade/icons/netlist.png" highlight_color = "red">
+	  <Event name = "clicked" handler = "MGtkBarItemClicked" data = "netlist"/>
+        </ToolItem>
+	<ToolItem label = "Configure" tip = "Set Configurations" icon = "src/spade/icons/conf.png" highlight_color = "red">
+	  <Event name = "clicked" handler = "MGtkBarItemClicked" data = "configure"/>
+        </ToolItem>
+	<ToolItem label = "Simulate" tip = "Run Simulations" icon = "src/spade/icons/sim.png" highlight_color = "red">
+	  <Event name = "clicked" handler = "MGtkBarItemClicked" data = "simulate"/>
+        </ToolItem>
+	<ToolItem label = "SEP"/>
+	<ToolItem label = "Help" tip = "Help &amp; About" icon = "src/spade/icons/help.png" highlight_color = "red">
+	  <Event name = "clicked" handler = "MGtkBarItemClicked" data = "help"/>
+        </ToolItem>
+      </ToolBar>
+    </Box>
+    <Event name = "destroy" handler = "MGtkDestroy" data = "NULL"/>
+  </Window>
+  <Window label = "SPADE Configuration Setting" size = "true" width = "540" height = "670" visibility = "true">
+    <Box homospace = "false" spaceing = "0" dir = "1" visibility = "true">
+      <ToolBar style = "Both" orientation = "H" expand = "false" fill = "false" padding = "0" borderWidth = "1">
+	<ToolItem label = "Load" tip = "Load Configuration File" icon = "src/spade/icons/open.png" id = "201">
+          <Event name = "clicked" handler = "MGtkBarItemClicked" data = "load" nid = "21" id = "205,206,208,210,211,212,213,214,215,216,217,218,219,220,221,222,223,224,225,226,227"/>
+        </ToolItem>
+	<ToolItem label = "Save" tip = "Save Current Configurations" icon = "src/spade/icons/save.png" id = "202">
+          <Event name = "clicked" handler = "MGtkBarItemClicked" data = "save" nid = "21" id = "205,206,208,210,211,212,213,214,215,216,217,218,219,220,221,222,223,224,225,226,227"/>
+        </ToolItem>
+	<ToolItem label = "Save As" tip = "Save Current Configurations To File..." icon = "src/spade/icons/saveas.png" id = "203">
+          <Event name = "clicked" handler = "MGtkBarItemClicked" data = "save as" nid = "21" id = "205,206,208,210,211,212,213,214,215,216,217,218,219,220,221,222,223,224,225,226,227"/>
+        </ToolItem>
+        <ToolItem label = "SEP" expand = "true" fill = "true" draw = "false"/>
+	<ToolItem label = "Reset" tip = "Re-load Configuration File" icon = "src/spade/icons/reload.png" id = "204">
+          <Event name = "clicked" handler = "MGtkBarItemClicked" data = "reset" nid = "23" id = "205,206,207,208,209,210,211,212,213,214,215,216,217,218,219,220,221,222,223,224,225,226,227"/>
+        </ToolItem>
+      </ToolBar>
+
+      <Box homospace = "false" spaceing = "0" dir = "0" visibility = "true" padding = "5">
+        <Frame label = "Paths" expand = "true" fill = "true" padding = "3" shadow = "IN">
+	  <Box homospace = "true" spaceing = "0" dir = "1" visibility = "true">
+	    <Box homospace = "false" spaceing = "0" dir = "0" visibility = "true">
+	      <Label label = "Configure File Path = " padding = "3"/>
+	      <Label label = "(None)" expand = "true" fill = "true" padding = "1" id = "205" ellipsize = "start" wrap = "true"/>
+	    </Box>
+	    <Box homospace = "false" spaceing = "0" dir = "0" visibility = "true">
+	      <Label label = "Circuit File Path = " padding = "3"/>
+	      <Label label = "(None)" expand = "true" fill = "true" padding = "1" id = "206" ellipsize = "start" wrap = "true"/>
+	      <Button label = "open" stock = "gtk-open" sequence = "1" padding = "3" relief = "None" id = "207">
+                <Event name = "clicked" handler = "MGtkButtonClicked" data = "CirPath" nid = "3" id = "206,215,221"/>
+	      </Button>
+	    </Box>
+	    <Box homospace = "false" spaceing = "0" dir = "0" visibility = "true">
+	      <Label label = "Library File Path = " padding = "3"/>
+	      <Label label = "(None)" expand = "true" fill = "true" padding = "1" id = "208" ellipsize = "start" wrap = "true"/>
+	      <Button label = "open" stock = "gtk-open" sequence = "1" padding = "3" relief = "None" id = "209">
+                <Event name = "clicked" handler = "MGtkButtonClicked" data = "LibPath" id = "208"/>
+	      </Button>
+	    </Box>
+          </Box>
+        </Frame>
+      </Box>
+      <Box homospace = "false" spaceing = "0" dir = "0" visibility = "true" padding = "5">
+        <Frame label = "Basic Settings" expand = "true" fill = "true" padding = "3" shadow = "IN">
+	  <Box homospace = "true" spaceing = "0" dir = "1" visibility = "true">
+	    <Box homospace = "false" spaceing = "0" dir = "0" visibility = "true">
+	      <Box homospace = "false" spaceing = "0" dir = "0" expand = "true" fill = "true" visibility = "true">
+	        <Label label = "Model" padding = "3"/>
+	        <ComboBox nitems = "3" items = "TT_3V | BB_3V | WW_3V" padding = "1" id = "210">
+		  <!--<Event name = "changed" handler = "MGtkComboBoxChanged" data = "Model"/>-->
+	        </ComboBox>
+	      </Box>
+	      <Box homospace = "false" spaceing = "0" dir = "0" expand = "true" fill = "true" visibility = "true">
+	        <Label label = "View" padding = "3"/>
+	        <ComboBox nitems = "3" items = "3D | 2D | 3D&amp;2D" padding = "1" id = "211">
+		  <!--<Event name = "changed" handler = "MGtkComboBoxChanged" data = "View"/>-->
+	        </ComboBox>
+	      </Box>
+	    </Box>
+	    <Box homospace = "false" spaceing = "0" dir = "0" padding = "5" visibility = "true">
+	      <Label label = "Frequence Range:" padding = "3"/>
+	    </Box>
+	    <Box homospace = "false" spaceing = "0" dir = "0" visibility = "true">
+              <Box homospace = "false" spaceing = "0" dir = "0" expand = "true" fill = "true" visibility = "true">
+		<Label label = "From (Hz)=" padding = "5"/>
+		<TextEntry label = "0.01" frame = "true" char_width = "10" id = "212">
+                  <Event name = "changed" handler = "MGtkTextEntryChanged" data = "FreqMin"/>
+                  <Event name = "activate" handler = "MGtkTextEntryActivate" data = "FreqMin"/>
+	        </TextEntry>
+	      </Box>
+              <Box homospace = "false" spaceing = "0" dir = "0" expand = "true" fill = "true" visibility = "true">
+		<Label label = "To (Hz)=" padding = "3"/>
+		<TextEntry label = "1e9" frame = "true" char_width = "10" id = "213">
+                  <Event name = "changed" handler = "MGtkTextEntryChanged" data = "FreqMax"/>
+                  <Event name = "activate" handler = "MGtkTextEntryActivate" data = "FreqMax"/>
+	        </TextEntry>
+	      </Box>
+              <Box homospace = "false" spaceing = "0" dir = "0" expand = "true" fill = "true" visibility = "true">
+		<Label label = "With Points (log)=" padding = "3"/>
+		<TextEntry label = "100" frame = "true" char_width = "10" id = "214">
+                  <Event name = "changed" handler = "MGtkTextEntryChanged" data = "FreqNum"/>
+                  <Event name = "activate" handler = "MGtkTextEntryActivate" data = "FreqNum"/>
+	        </TextEntry>
+	      </Box>
+	    </Box>
+          </Box>
+        </Frame>
+      </Box>
+      <Box homospace = "false" spaceing = "0" dir = "0" visibility = "true" padding = "5">
+        <Frame label = "Parameter 1" expand = "true" fill = "true" padding = "3" shadow = "IN">
+	  <Box homospace = "true" spaceing = "0" dir = "1" visibility = "true">
+	    <Box homospace = "false" spaceing = "0" dir = "0" visibility = "true">
+	      <Box homospace = "false" spaceing = "0" dir = "0" expand = "true" fill = "true" visibility = "true">
+	        <Label label = "Node Name" padding = "3"/>
+	        <ComboBox padding = "1" id = "215">
+                  <Event name = "changed" handler = "MGtkComboBoxChanged" data = "P1Name" id = "216"/>
+	        </ComboBox>
+	      </Box>
+	      <Box homospace = "false" spaceing = "0" dir = "0" expand = "true" fill = "true" visibility = "true">
+	        <Label label = "Display Name" padding = "3"/>
+	        <ComboBox padding = "1" editable = "true" char_width = "10" id = "216">
+		  <!--<Event name = "changed" handler = "MGtkComboBoxChanged" data = "P1Alias"/>-->
+                  <Event name = "activate" handler = "MGtkComboBoxEntryActivate" data = "P1Alias"/>
+	        </ComboBox>
+	      </Box>
+	    </Box>
+	    <Box homospace = "false" spaceing = "0" dir = "0" padding = "5" visibility = "true">
+	      <Label label = "Value Range:" padding = "3"/>
+	    </Box>
+	    <Box homospace = "false" spaceing = "0" dir = "0" visibility = "true">
+              <Box homospace = "false" spaceing = "0" dir = "0" expand = "true" fill = "true" visibility = "true">
+		<Label label = "From" padding = "5"/>
+                <Label label = "=" padding = "3"/>
+		<TextEntry label = "0" frame = "true" char_width = "10" id = "217">
+                  <Event name = "changed" handler = "MGtkTextEntryChanged" data = "P1ValMin"/>
+                  <Event name = "activate" handler = "MGtkTextEntryActivate" data = "P1ValMin"/>
+	        </TextEntry>
+	      </Box>
+              <Box homospace = "false" spaceing = "0" dir = "0" expand = "true" fill = "true" visibility = "true">
+		<Label label = "To" padding = "1"/>
+		<Label label = "=" padding = "3"/>
+		<TextEntry label = "1" frame = "true" char_width = "10" id = "218">
+                  <Event name = "changed" handler = "MGtkTextEntryChanged" data = "P1ValMax"/>
+                  <Event name = "activate" handler = "MGtkTextEntryActivate" data = "P1ValMax"/>
+	        </TextEntry>
+	      </Box>
+              <Box homospace = "false" spaceing = "0" dir = "0" expand = "true" fill = "true" visibility = "true">
+		<Label label = "With Points (Lin)=" padding = "3"/>
+		<TextEntry label = "100" frame = "true" char_width = "10" id = "219">
+                  <Event name = "changed" handler = "MGtkTextEntryChanged" data = "P1ValNum"/>
+                  <Event name = "activate" handler = "MGtkTextEntryActivate" data = "P1ValNum"/>
+	        </TextEntry>
+	      </Box>
+	    </Box>
+	    <Box homospace = "false" spaceing = "0" dir = "0" visibility = "true">
+              <Box homospace = "false" spaceing = "0" dir = "0" expand = "true" fill = "true" visibility = "true">
+		<Label label = "Normal Distribution Standard Deviation (&#963;) =" padding = "5"/>
+		<TextEntry frame = "true" char_width = "10" id = "220">
+                  <Event name = "changed" handler = "MGtkTextEntryChanged" data = "P1ValSigma"/>
+                  <Event name = "activate" handler = "MGtkTextEntryActivate" data = "P1ValSigma"/>
+	        </TextEntry>
+	      </Box>
+	    </Box>
+          </Box>
+        </Frame>
+      </Box>
+      <Box homospace = "false" spaceing = "0" dir = "0" visibility = "true" padding = "5">
+        <Frame label = "Parameter 2" expand = "true" fill = "true" padding = "3" shadow = "IN">
+	  <Box homospace = "true" spaceing = "0" dir = "1" visibility = "true">
+	    <Box homospace = "false" spaceing = "0" dir = "0" visibility = "true">
+	      <Box homospace = "false" spaceing = "0" dir = "0" expand = "true" fill = "true" visibility = "true">
+	        <Label label = "Node Name" padding = "3"/>
+	        <ComboBox padding = "1" id = "221">
+		  <Event name = "changed" handler = "MGtkComboBoxChanged" data = "P2Name" id = "222"/>
+	        </ComboBox>
+	      </Box>
+	      <Box homospace = "false" spaceing = "0" dir = "0" expand = "true" fill = "true" visibility = "true">
+	        <Label label = "Display Name" padding = "3"/>
+	        <ComboBox padding = "1" editable = "true" char_width = "10" id = "222">
+		  <!--<Event name = "changed" handler = "MGtkComboBoxChanged" data = "P2Alias"/>-->
+                  <Event name = "activate" handler = "MGtkComboBoxEntryActivate" data = "P2Alias"/>
+	        </ComboBox>
+	      </Box>
+	    </Box>
+	    <Box homospace = "false" spaceing = "0" dir = "0" padding = "5" visibility = "true">
+	      <Label label = "Value Range:" padding = "3"/>
+	    </Box>
+	    <Box homospace = "false" spaceing = "0" dir = "0" visibility = "true">
+              <Box homospace = "false" spaceing = "0" dir = "0" expand = "true" fill = "true" visibility = "true">
+		<Label label = "From" padding = "5"/>
+                <Label label = "=" padding = "3"/>
+		<TextEntry label = "0" frame = "true" char_width = "10" id = "223">
+                  <Event name = "changed" handler = "MGtkTextEntryChanged" data = "P2ValMin"/>
+                  <Event name = "activate" handler = "MGtkTextEntryActivate" data = "P2ValMin"/>
+	        </TextEntry>
+	      </Box>
+              <Box homospace = "false" spaceing = "0" dir = "0" expand = "true" fill = "true" visibility = "true">
+		<Label label = "To" padding = "1"/>
+		<Label label = "=" padding = "3"/>
+		<TextEntry label = "1" frame = "true" char_width = "10" id = "224">
+                  <Event name = "changed" handler = "MGtkTextEntryChanged" data = "P2ValMax"/>
+                  <Event name = "activate" handler = "MGtkTextEntryActivate" data = "P2ValMax"/>
+	        </TextEntry>
+	      </Box>
+              <Box homospace = "false" spaceing = "0" dir = "0" expand = "true" fill = "true" visibility = "true">
+		<Label label = "With Points (Lin)=" padding = "3"/>
+		<TextEntry label = "100" frame = "true" char_width = "10" id = "225">
+                  <Event name = "changed" handler = "MGtkTextEntryChanged" data = "P2ValNum"/>
+                  <Event name = "activate" handler = "MGtkTextEntryActivate" data = "P2ValNum"/>
+	        </TextEntry>
+	      </Box>
+	    </Box>
+	    <Box homospace = "false" spaceing = "0" dir = "0" visibility = "true">
+              <Box homospace = "false" spaceing = "0" dir = "0" expand = "true" fill = "true" visibility = "true">
+		<Label label = "Normal Distribution Standard Deviation (&#963;) =" padding = "5"/>
+		<TextEntry frame = "true" char_width = "10" id = "226">
+                  <Event name = "changed" handler = "MGtkTextEntryChanged" data = "P2ValSigma"/>
+		  <Event name = "activate" handler = "MGtkTextEntryActivate" data = "P2ValSigma"/>
+	        </TextEntry>
+	      </Box>
+	    </Box>
+          </Box>
+        </Frame>
+      </Box>
+      <Box homospace = "false" spaceing = "0" dir = "0" visibility = "true" padding = "5">
+        <Frame label = "Correlation" expand = "true" fill = "true" padding = "3" shadow = "IN">
+	  <Box homospace = "true" spaceing = "0" dir = "1" visibility = "true">
+	    <Box homospace = "false" spaceing = "0" dir = "0" visibility = "true">
+	      <Box homospace = "false" spaceing = "0" dir = "0" expand = "true" fill = "true" visibility = "true">
+	        <Label label = "Correlation Degree (Parameter 1 &amp; Parameter 2)=" padding = "3"/>
+		<TextEntry frame = "true" char_width = "10" id = "227">
+                  <Event name = "changed" handler = "MGtkTextEntryChanged" data = "CorDegree"/>
+		  <Event name = "activate" handler = "MGtkTextEntryActivate" data = "CorDegree"/>
+	        </TextEntry>
+	      </Box>
+	    </Box>
+          </Box>
+        </Frame>
+      </Box>
+    </Box>
+    <Event name = "destroy" handler = "MGtkDestroy" data = "NULL"/>
+  </Window>
+</GTK>
