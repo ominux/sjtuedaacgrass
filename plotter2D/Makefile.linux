@@ -1,0 +1,33 @@
+# Top Makefile for Qt 4 projects on Linux
+# with g++ version > 4.1
+QMAKE := qmake
+QPROJECTFLAGS := -project
+QMAKEFILEFLAGS := -unix -Wall
+QMAKEFILEFLAGS := -makefile -unix -Wall
+# Qt4 Makefile
+MAKEFILE_QT = Makefile.qt
+PROJECT_QT = plotter2D.pro
+
+.PHONY: qt debug release clean distclean
+
+all: $(MAKEFILE_QT)
+	$(MAKE) -f $< -j2
+
+debug: $(MAKEFILE_QT)
+	$(MAKE) $@ -f $< -j2
+
+release: $(MAKEFILE_QT)
+	$(MAKE) $@ -f $< -j2
+
+$(MAKEFILE_QT): $(PROJECT_QT)
+	$(QMAKE) $(QMAKEFILEFLAGS) $< -o $@
+
+$(PROJECT_QT): qt
+	-$(RM) $(PROJECT_QT)
+	$(QMAKE) $(QPROJECTFLAGS) -o $(PROJECT_QT)
+
+clean: $(MAKEFILE_QT)
+	$(MAKE) -f $(MAKEFILE_QT) $@
+
+distclean: $(MAKEFILE_QT)
+	$(MAKE) -f $(MAKEFILE_QT) $@
