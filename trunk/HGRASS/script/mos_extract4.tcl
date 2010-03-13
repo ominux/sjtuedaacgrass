@@ -181,8 +181,11 @@ proc build_cir {SPFile} {
 	set fh [open "$SPFile"]
 	set CirFile [string map -nocase {.sp _ext.sp .cir _ext.sp} "$SPFile"]
 	set channel [open $CirFile w]
-	set inode_num 100
+	set inode_num 10000
 	set l_eqnode 0
+
+	gets $fh line
+	puts $channel $line
 
 	#read input and output format defined by user
 	while {[gets $fh line] >= 0} {
@@ -428,6 +431,43 @@ proc build_cir {SPFile} {
 	close $channel
 }
 
+proc replace_node {fileName} {
+        
+	set fh [open "$fileName"]
+	gets $fh line
+	set nodeList {}
+	while {[gets $fh line] >= 0} {
+		if {[string is space $line] || [string match -nocase {.*} $line] || [string match -nocase {\**} $line]} {
+			continue
+		}
+		set numNodes 0
+		if {[string match -nocase {[rlcvi]*} $line]} {
+			set numNodes 2
+		}
+		if {[string match -nocase {[eghf]*} $line]} {
+			set numNodes 4
+		}
+		for {set i 1} {$i < [expr $numNodes+1]} {incr i} {
+			set node [lindex $line $i]
+			if {[string match {0} $node]} {
+				continue
+			}
+			if {[lsearch -exact $nodeList $node] < 0} {
+				lappend nodeList $node
+			}
+		}
+	}
+	close $fh
+
+	set nodeIndex 20000
+	foreach n $nodeList {
+		incr nodeIndex
+		if {[catch {exec sed -i "1!{/^\.\[^(\]*(\[^)\]\\+)\\|^\[rlcvighfeRLCVIGHFE\]/s/\\<$n\\>/$nodeIndex/g}" $fileName}]} {
+			break;
+		} 
+	}
+}
+
 
 foreach arg $argv {
 	mos_extract $arg
@@ -436,4 +476,6 @@ foreach arg $argv {
 	set spName "$name.sp"
 	#puts $spName
 	build_cir $spName
+	set spNewName [string map -nocase {.sp _ext.sp .cir _ext.sp} "$spName"]
+        replace_node $spNewName
 }

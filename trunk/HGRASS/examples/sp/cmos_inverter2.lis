@@ -6,19 +6,19 @@
     /license.warn
   Use of this program is your acceptance to be bound by this 
   license agreement. HSPICE is the trademark of Synopsys, Inc.
-  Input File: /home/madiming/EDA/AnalogCourse/HGRASS/examples/sp/cmos_inverter.s
+  Input File: cmos_inverter2.sp                                                 
  lic: No 'setenv LM_LICENSE_FILE' in current environment' 
  lic:  
  lic: FLEXlm: v8.5b 
  lic: USER:   madiming             HOSTNAME: eda-server.localdomain 
- lic: HOSTID: 002219a9250f         PID:      6930 
+ lic: HOSTID: 002219a9250f         PID:      24132 
  lic: Using FLEXlm license file: 
  lic: /usr/local/flexlm/licenses/license.dat 
  lic: Checkout 1 hspice 
  lic: License/Maintenance for hspice will expire on 31-dec-2020/2007.9 
  lic: NODE LOCKED license on hostid 002219a9250f 
  lic:   
- *iodef: vin 2 1 vout 4
+ *iodef: vin in 1 vout out
  .lib 'cmos25.lib' tt
 
  .param toxp = 5.8e-9 toxn = 5.8e-9 
@@ -179,16 +179,16 @@
 
  *netlist---------------------------------------
 
- vdd 1 0 5
- vin 2 0 pulse 0 5 2ns 2ns 2ns 30ns 80ns
+ vdd vdd 0 5
+ vin in 0 pulse 0 5 2ns 2ns 2ns 30ns 80ns
 
- rb 2 3 10k
- r2 2 3 10k
- m1 4 3 0 0 nmos l=0.5u w=10u
+ rb in base 10k
+ r2 in base 10k
+ m1 out base 0 0 nmos l=0.5u w=10u
 
- *m1 4 3 0 0 nch l=2u w=100u  **** for 'mix025.lib'
+ *m1 out base 0 0 nch l=2u w=100u  **** for 'mix025.lib'
 
- m2 4 3 1 1 pmos l=0.5u w=10u
+ m2 out base vdd vdd pmos l=0.5u w=10u
 
  *extra control information---------------------
 
@@ -200,8 +200,7 @@
 
  .tran 1ns 300ns
  .dc vin 0 5 0.1
- .print ac vdb(4) vp(4) 
-
+ .print ac vdb(out) vp(out)
  .end
  scientific notation:
  a=10**-18  f=10**-15  p=10**-12  n=10**-9  u=10**-6
@@ -499,8 +498,8 @@
  
                                         
  element name        0:rb       0:r2    
- node1               0:2        0:2     
- node2               0:3        0:3     
+ node1               0:in       0:in    
+ node2               0:base     0:base  
  model                                  
  res eff            10.0000k   10.0000k 
  tc1                 0.         0.      
@@ -518,8 +517,8 @@
  **** independent sources
 
      name         node1        node2      dc volt    ac mag    ac phase    type
-        0:vdd       0:1                      0:0                   5.0000     0.         0.      dc   
-        0:vin       0:2                      0:0                   0.         0.         0.      pulse
+        0:vdd       0:vdd                    0:0                   5.0000     0.         0.      dc   
+        0:vin       0:in                     0:0                   0.         0.         0.      pulse
              initial value     0.     
              pulsed value.     5.0000 
              delay time...     2.0000n
@@ -538,10 +537,10 @@
  
                                         
  element name        0:m1       0:m2    
- drain               0:4        0:4     
- gate                0:3        0:3     
- source              0:0        0:1     
- bulk                0:0        0:1     
+ drain               0:out      0:out   
+ gate                0:base     0:base  
+ source              0:0        0:vdd   
+ bulk                0:0        0:vdd   
  model               0:nmos     0:pmos  
  w eff               9.9865u    9.9844u 
  l eff             494.8000n  505.2700n 
@@ -573,13 +572,13 @@
        
  0                vdd              vin              m1:s             m1:b       
        
- 1                vdd              m2:s             m2:b                        
+ base             rb               r2               m1:g             m2:g       
        
- 2                rb               r2               vin                         
+ in               rb               r2               vin                         
        
- 3                rb               r2               m1:g             m2:g       
+ out              m1:d             m2:d                                         
        
- 4                m1:d             m2:d                                         
+ vdd              vdd              m2:s             m2:b                        
        
  **warning** no probe statements specified, thus .sw# omitted
 1****** HSPICE -- A-2008.03 64-BIT (Feb 26 2008) linux ******                   
@@ -590,8 +589,8 @@
  ***** operating point status is all       simulation time is     0.     
     node    =voltage      node    =voltage      node    =voltage
 
- +0:1       =   5.0000  0:2       =   0.      0:3       =   0.     
- +0:4       =   5.0000 
+ +0:base    =   0.      0:in      =   0.      0:out     =   5.0000 
+ +0:vdd     =   5.0000 
 
 
  ****  voltage sources
@@ -673,8 +672,8 @@
     output             0.00
            total cpu time          0.01 seconds
            total elapsed time         1 seconds
-               job started at  22:45:39 03/13/2010
-               job ended   at  22:45:39 03/13/2010
+               job started at  00:02:05 03/12/2010
+               job ended   at  00:02:05 03/12/2010
 
 
  lic: Release hspice token(s) 
