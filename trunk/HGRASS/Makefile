@@ -21,11 +21,12 @@ PROGRAM = SPADE
 all:$(DIRS)
 	#GRASS Make
 	@echo Building GRASS Binary ...;
-	$(MAKE) -C $(GRASS) clean >/dev/null
+	$(MAKE) -C $(GRASS) distclean GUI2D=0 >/dev/null
 	$(MAKE) -C $(GRASS) GUI2D=0 >/dev/null
-	$(MAKE) -C $(GRASS) clean >/dev/null
+	mv $(GRASS3D) $(GRASS3DSim)
+	$(MAKE) -C $(GRASS) distclean GUI2D=1 >/dev/null
 	$(MAKE) -C $(GRASS) GUI2D=1 >/dev/null
-	mv $(GRASS3D) $(GRASS3DSim); mv $(GRASS2D) $(GRASS2DSim)
+	mv $(GRASS2D) $(GRASS2DSim)
 	@echo GRASS Binary Building Finished!;
 	#End of GRASS Make
 	#SPADE Make
