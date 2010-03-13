@@ -243,6 +243,16 @@ void MProcessSimulateError(int errorNumber)
             break;
             }
             break;
+     case 12://Configure Information Not Enough
+	    {
+	    POPUP_ERROR("Too little configure information!\nPlease finish configure settings and retry later");
+	    break;
+	    }
+     case 13://Spice Circuit File Not Exit
+	    {
+	    POPUP_ERROR("Cannot find the circuit file!\nPlease re-chech the file path setting and retry later");
+	    break;
+	    }
      default://Error Number Not Recognized
             {
             POPUP_ERROR("Error cannot be recognized!\nPlease contact SPADE designers and retry later");

@@ -23,6 +23,9 @@ proc ProcessConfigureFile {ConfigureFile} {
       }
       if {[string match -nocase {* = *} $line]} {
         if {[scan $line {%s = %s} key value] == 2} {
+	  if {[string match -nocase {(NONE)} $value] | [string match -nocase {NULL} $value] | [string match -nocase {""} $value]} {
+            set value ""
+	  }
 	  switch $key {
             ConfPath	{set GrassConfPath	$value}
             CirPath	{set GrassCirPath	$value}
@@ -57,6 +60,26 @@ proc ProcessConfigureFile {ConfigureFile} {
     close $fh
 
     if {[file isdirectory $GrassPath]} {
+      if {[string match "" $GrassP1Name] | 
+	  [string match "" $GrassP1Alias] | 
+	  [string match "" $GrassP1ValFrom] | 
+	  [string match "" $GrassP1ValTo] | 
+	  [string match "" $GrassP1ValN] | 
+	  [string match "" $GrassP2Name] |
+	  [string match "" $GrassP2Alias] | 
+	  [string match "" $GrassP2ValFrom] | 
+	  [string match "" $GrassP2ValTo] | 
+	  [string match "" $GrassP2ValN] | 
+	  [string match "" $GrassFreqFrom] | 
+	  [string match "" $GrassFreqTo] | 
+	  [string match "" $GrassFreqN] | 
+	  [string match "" $GrassP1ValSigma] | 
+	  [string match "" $GrassP2ValSigma] |
+	  [string match "" $GrassCorrelation] |
+          0 } {
+	#Configure Information Not Enough
+        exit 12
+      }
       set fh [open $GrassConfiugreFile w]
       puts $fh "$GrassP1Name $GrassP1Alias"
       puts $fh "$GrassP1ValFrom $GrassP1ValTo"
@@ -93,7 +116,11 @@ proc RunSpiceSimulation {} {
     set RptSpiceName $RptPath$SpiceName
     set ErrRpt "spiceerr.rpt"
     set SpiceErrRpt $RptPath$ErrRpt
-    exec dos2unix $GrassCirPath >&/dev/null
+    if {[catch {exec dos2unix $GrassCirPath >&/dev/null}]} {
+      #puts $GrassCirPath
+      #Spice Circuit File Not Exist
+      exit 13
+    }
     if {[catch {exec hspice $GrassCirPath -o $RptSpiceName 2>$SpiceErrRpt}]} {
       #hspice run errors
       set ErrContentRpt "spiceerrlis.rpt"

@@ -1,8 +1,8 @@
 * "simulator" "HSPICE" 
 * "version" "A-2008.03 64-BIT"
 * "format" "HSP"
-* "rundate" "22:45:39 03/13/2010 "
-* "netlist" "/home/madiming/EDA/AnalogCourse/HGRASS/examples/sp/cmos_inverter.sp "
+* "rundate" "22:21:13 03/10/2010 "
+* "netlist" "/home/madiming/EDA/AnalogCourse/HGRASS/examples/sp/cmos_inverter2.sp "
 * "runtitle" "simple nmos inverter"
 * time =    0.            
 * temperature =   25.0000        
@@ -10,8 +10,8 @@
 .option 
 + gmindc=   1.0000p       
 .nodeset
-+ 1 =   5.0000        
-+ 2 =   0.            
-+ 3 =   0.            
-+ 4 =   5.0000        
++ base =   0.            
++ in =   0.            
++ out =   5.0000        
++ vdd =   5.0000        
 ***   END: Saved Operating Point ***                     

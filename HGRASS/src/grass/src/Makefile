@@ -77,6 +77,7 @@ ifeq ($(PLATFORM),MINGW32)
 LDFLAGS += -mwindows $(GUI_LIB_DIR)/glut32.lib -lopengl32 -lglu32
 else
 LDFLAGS += -lglut -lGLU -lGL
+#LDFLAGS += opengl_gui/libglut.a -lGLU -lGL -L/usr/X11R6/lib -lX11 -lXmu
 endif
 endif
 

@@ -92,6 +92,7 @@
 #define XML_CONFIG	"src/spade/xml/SPADE.xml"
 #define DOC_HELP	"doc/help/index.html"
 #define SCRIPT_CMD_VA	"script/IsCommandValid.tcl"
+#define SCRIPT_CMD_INIT	"script/Init.tcl"
 #define SCRIPT_CMD_RUN	"script/Run.tcl"
 #define GRASS_CONF	"src/grass/GrassConfs"
 #define HSPICE_ERR	"rpt/spiceerrlis.rpt"
