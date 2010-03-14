@@ -259,7 +259,7 @@ proc build_cir {SPFile} {
 				}
 			}
 
-			if {$node_D=="gnd"||$node_D=="vdd"} {
+			if {$node_D=="gnd"||$node_D=="vdd"||$node_D=="vdd!"} {
 				#puts "find gnd or vdd"
 				set node_D 0
 			} elseif {$node_D=="vin"} {
@@ -268,7 +268,7 @@ proc build_cir {SPFile} {
 				set node_D $output_node
 			}
 
-			if {$node_G=="gnd"||$node_G=="vdd"} {
+			if {$node_G=="gnd"||$node_G=="vdd"||$node_G=="vdd!"} {
 				#puts "find gnd or vdd"
 				set node_G 0
 			} elseif {$node_G=="vin"} {
@@ -277,7 +277,7 @@ proc build_cir {SPFile} {
 				set node_G $output_node
 			} 
 
-			if {$node_S=="gnd"||$node_S=="vdd"} {
+			if {$node_S=="gnd"||$node_S=="vdd"||$node_S=="vdd!"} {
 				#puts "find gnd or vdd"
 				set node_S 0
 			} elseif {$node_S=="vin"} {
@@ -286,7 +286,7 @@ proc build_cir {SPFile} {
 				set node_S $output_node
 			} 
 
-			if {$node_B=="gnd"||$node_B=="vdd"} {
+			if {$node_B=="gnd"||$node_B=="vdd"||$node_B=="vdd!"} {
 				#puts "find gnd or vdd"
 				set node_B 0
 			} elseif {$node_B=="vin"} {
@@ -410,7 +410,7 @@ proc build_cir {SPFile} {
 				set temp $line
 				for {set i 0} {$i < [llength $line]} {incr i} {
 					set indiv [lindex $line $i]
-					if {$indiv=="vdd"||$indiv=="gnd"} {
+					if {$indiv=="vdd"||$indiv=="gnd"||$indiv=="vdd!"} {
 						#puts $i
 						#puts "find vdd or gnd node"
 						set temp [lreplace $temp $i $i 0]
