@@ -15,7 +15,6 @@
 #ifndef _M_IX86
 #define _M_IX86
 #endif // _M_IX86
-// #include <windows.h>
 #endif // _WIN32
 #include <cstdlib>
 //#include <GL/glut.h>
@@ -39,11 +38,10 @@ using std::strlen;
 using std::strcpy;
 
 // Global variable declaration
-// Phase Margin Parameter Group
+/// Phase Margin Parameter Group
 extern ParameterGroup *ptr_parameter_group_pm_x, *ptr_parameter_group_pm_y;
-// Phase Margin Parameter Group
+/// Phase Margin Parameter Group
 extern ParameterGroup *ptr_parameter_group_bw_x, *ptr_parameter_group_bw_y;
-// extern string par_name[];
 // Global Wrapper Pointers
 extern MainWrapper *main_wrapper_global_phase_margin;
 extern MainWrapper *main_wrapper_global_phase_margin_sens;
@@ -55,18 +53,12 @@ extern GLdouble sigma1, sigma2;
 extern GLdouble normal_pdf_2D(const GLdouble x, const GLdouble y, void *);
 // Declare these global variables just
 // for destructing them when the pragram is terminated by exit().
-class ToGraph;
-extern ToGraph	*toGraph;
-#ifdef PARALLEL_COMPUTING
-extern ToGraph	*toGraph2;
-#endif // PARALLEL_COMPUTING
 extern Analysis *ptr_analysis1;
 extern Analyser *ptr_analyser1;
-extern tpdd *mytpdd1;
 extern Analysis *ptr_analysis2;
 extern Analyser *ptr_analyser2;
-extern tpdd *mytpdd2;
 
+/// Namespace for OpenGL callback functions
 namespace Callback
 {
 namespace
@@ -79,7 +71,7 @@ MainWrapper *main_wrapper_global = 0;
 const GLdouble drawing_center[3] = {0.0, 0.0, -200.0};
 const GLdouble view_angle_variation = 2.5; // Degree
 bool show_grid = false;
-bool show_design_center = false; // show data pointon the contour window
+bool show_design_center = true; // show data pointon the contour window
 bool show_legend = false; // show legend of contour ellipses on the contour window
 GLint contour_window_width = 0, contour_window_height = 0; // Size of the contour window
 const GLdouble contour_display_ratio = 3.0 / 2.0;
@@ -88,7 +80,8 @@ GLdouble contour_x = 0, contour_y = 0;
 bool show_contour_data_pointer = false; // for contour window
 bool show_highlight_contour_on_surface = true; // for surface window
 bool show_highlight_data_pointer_on_surface = false; // for surface window
-bool enable_absorption = true; // bind to key 'm'
+// data pointer on the contour window will be adsorbed on the contour line
+bool enable_absorption = false; // bind to key 'm'
 
 // Project Square Plain
 GLdouble square_z = 0.0;
@@ -144,6 +137,7 @@ const GLfloat ellipse_color[NUM_ELLIPSE][3] = {
 };
 vector<Surface<GLdouble>::LineType> contour_ellipse[NUM_ELLIPSE];
 
+/// Refresh all subwindows
 void
 redisplay_all()
 {
@@ -152,7 +146,7 @@ redisplay_all()
 	glutPostWindowRedisplay(status_window);
 }
 
-// With a variable-length parameter table like printf()
+/// With a variable-length parameter table like printf()
 void
 draw_string(GLvoid *font, const GLdouble position[3], const char *format, ...)
 {
@@ -232,9 +226,9 @@ void draw_surface(const VertexMatrix<GLdouble> &vertexmat,
 	}
 }
 
-/*
+/**
  * Draw the surface grid, a mesh.
- **/
+ */
 void draw_surface_grid(const VertexMatrix<GLdouble> &vertexmat,
 											 const NormalMatrix<GLdouble> &normalmat,
 											 const size_t &num_xpoints,
@@ -269,29 +263,30 @@ void draw_surface_grid(const VertexMatrix<GLdouble> &vertexmat,
 	}
 }
 
-/*
- * Draw a cube skeleton embracing the whole 3D surface.
- *
- * Input: Vector3D *pvmin, *pvmax.
- *      z
- *	    |
- *	  (0,0) - y
- *	   /
- *    x
- *
- * Vertex map:
- *     Z
- *     |
- *     1----------6
- *    /|         /|
- *   2----------5 |
- *   | |        | |
- *   | 0--------|-7-- Y
- *   |/         |/
- *   3----------4
- *  /
- * X
- **/
+/**
+  \brief Draw a cube skeleton embracing the whole 3D surface.
+ 
+  \verbatim
+      Z
+      |
+    (0,0) - Y
+     /
+    X
+ 
+  Vertex map:
+      Z
+      |
+      1----------6
+     /|         /|
+    2----------5 |
+    | |        | |
+    | 0--------|-7-- Y
+    |/         |/
+    3----------4
+   /
+  X
+  \endverbatim
+ */
 void draw_cube_skeleton(const GLdouble vmin[3], const GLdouble vmax[3])
 {
 	GLdouble v0[3] = {vmin[0], vmin[1], vmin[2]};
@@ -352,17 +347,19 @@ void draw_cube_skeleton(const GLdouble vmin[3], const GLdouble vmax[3])
 	glEnd();
 }
 
-/*
- * Draw a square on the XOY plane.
- * (0,0) ---------- x - +INF
- *   |  v1 --- v2
- *   |  |      |
- *   |  |      |
- *   y  v4 --- v3
- *   |
- * +INF
- * Order: v1 -> v2 -> v3 -> v4
- **/
+/**
+  \brief Draw a square on the XOY plane.
+	\verbatim
+  (0,0) ---------- x - +INF
+    |  v1 --- v2
+    |  |      |
+    |  |      |
+    y  v4 --- v3
+    |
+  +INF
+  Order: v1 -> v2 -> v3 -> v4
+	\endverbatim
+ */
 void draw_square(const VertexMatrix<GLdouble> &vertexmat)
 {
 	const GLfloat front_material_specular[4] = {1.0, 1.0, 1.0, 0.5};
@@ -736,6 +733,16 @@ void display_status()
 	GLdouble z_Sens_pos2[3] = {20.0, first_line + line_height*4, 0.0};
 	GLdouble z_grad_pos[3] = {20.0, first_line + line_height*5, 0.0};
 	const GLdouble design_center[3] = {mu1, mu2, 0.0};
+	//if (enable_absorption)
+	//{
+	//	design_center[0] = contour_x;
+	//	design_center[1] = contour_y;
+	//}
+	//else
+	//{
+	//	design_center[0] = Px;
+	//	design_center[1] = Py;
+	//}
 	if (show_contour_data_pointer)
 	{
 		draw_string(GLUT_BITMAP_HELVETICA_12, mouse_pos, "(%s, %s) = (%e, %e)", 
@@ -894,13 +901,25 @@ void menu_surface(int value)
 
 namespace
 {
-// Init drawing position, i.e. the origin
-// and translate the 3D coordinates from
-//      y               z  y
-//	    |               | /
-//	  (0,0) -- x  to  (0,0) -- x
-//	   /
-//    z
+/**
+ 	\brief Init drawing position.
+
+ * i.e. Set the origin and translate the 3D coordinates from
+	\verbatim
+      y
+      |
+    (0,0) -- x
+     /
+    z
+	\endverbatim
+ * to
+	\verbatim
+      z   y
+      |  /
+      | /
+      (0,0) -- x
+	\endverbatim
+ */
 void init_drawing_position()
 {
 	glMatrixMode(GL_MODELVIEW);
@@ -915,6 +934,7 @@ void keyboard_surface(unsigned char key, int /*mouse_x*/, int /*mouse_y*/)
 	switch (key)
 	{
 	case 'I': square_z = square_z_init; // Reset the reference sqare plane
+						contour_line.clear(); // clear the relative contour line
 						show_contour_data_pointer = false;
 						show_highlight_data_pointer_on_surface = false;
 						redisplay_all(); // Refresh
@@ -929,6 +949,7 @@ void keyboard_surface(unsigned char key, int /*mouse_x*/, int /*mouse_y*/)
 						glutPostWindowRedisplay(surface_window);
 						break;
 	case ' ': square_z = square_z_init;
+						contour_line.clear(); // clear the relative contour line
 						show_contour_data_pointer = false;
 						show_highlight_data_pointer_on_surface = false;
 						init_drawing_position();
@@ -953,14 +974,7 @@ void keyboard_surface(unsigned char key, int /*mouse_x*/, int /*mouse_y*/)
 						delete main_wrapper_global_band_width;
 						delete main_wrapper_global_phase_margin_sens;
 						delete main_wrapper_global_phase_margin;
-						if (mytpdd2 != mytpdd1)
-							delete mytpdd2;
-						delete mytpdd1;
-#ifdef PARALLEL_COMPUTING
-						delete toGraph2;
-#endif // PARALLEL_COMPUTING
-						delete toGraph;
-						printf("\nGRASS(GUI3D) Exit normally.\n");
+						printf("\nGRASS(3D) Exit normally.\n");
 						exit(0);
 						break;
 	case 'l': // Save current contour line as lower bound.
@@ -971,16 +985,13 @@ void keyboard_surface(unsigned char key, int /*mouse_x*/, int /*mouse_y*/)
 	case 'L': // Show lower bound info.
 						break;
 	case 'u': // Save current contour line as upper bound.
-						// show_contour_line_boundary = false;
 						contour_line_upper_bound = contour_line;
 						redisplay_all();
 						break;
 	case 'U': // Show upper bound info.
 						break;
 	case 'a': // Show previous contour line saved or not.
-						show_contour_line_boundary = ~show_contour_line_boundary;
-						// contour_line_lower_bound.clear();
-						// contour_line_upper_bound.clear();
+						show_contour_line_boundary = !show_contour_line_boundary;
 						redisplay_all();
 						break;
 	case 'p': // Save current contour line as a phase margin copy.
@@ -1060,29 +1071,34 @@ void special_keyboard(int key, int /*mouse_x*/, int /*mouse_y*/)
 	redisplay_all(); // Refresh
 }
 
-/*
+/**
  * Pick up a data point among the contour lines.
  *
  * First, find the nearest contour line to the mouse point.
  *
  * Second, find the foot of the perpendicular
  * from the mouse point to the nearest contour line.
- *               * P
- *               |
- *               |
- * P1 *----------+---------*P2
- *              (Q)
- * where P is the mouse point, Q is the foot of the perpendicular,
- * and P1P2 is the nearest contour line to point P
- * with min(|PP1|^2 + |PP2|^2).
+ \verbatim
+                * P
+                |
+                |
+  P1 *----------+---------*P2
+               (Q)
+ \endverbatim
+ * where \f$P\f$ is the mouse point, \f$Q\f$ is the foot of the perpendicular,
+ * and \f$P_1P_2\f$ is the nearest contour line to point \f$P\f$
+ * with \f$\mbox{min} (|PP_1|^2 + |PP_2|^2)\f$.
  * 
- * If the foot Q is outside of line P1P2, choose the point between P1 and P2
- * which is nearer to P than the other. Otherwise Q is the right point.
- *                  * P
- *                  |
- *                  |
- * P1 *-----*-------+
- *         (P2)     Q
+ * If the foot \f$Q\f$ is outside of line \f$P_1P_2\f$, choose the point
+ * between \f$P_1\f$ and \f$P_2\f$
+ * which is nearer to \f$P\f$ than the other. Otherwise \f$Q\f$ is the right point.
+ \verbatim
+                   * P
+                   |
+                   |
+  P1 *-----*-------+
+          (P2)     Q
+ \endverbatim
  */
 void contour_mouse_left_click(int mouse_x, int mouse_y)
 {
@@ -1228,7 +1244,8 @@ void contour_mouse_left_click(int mouse_x, int mouse_y)
 
 void mouse_contour(int button, int state, int mouse_x, int mouse_y)
 {
-	if (state == GLUT_DOWN && button == GLUT_RIGHT_BUTTON)
+	if (state == GLUT_DOWN && button == GLUT_RIGHT_BUTTON &&
+		 	show_design_center && contour_ellipse[0].size())
 	{
 		// Cancel the data pointer when dragging mouse
 		show_contour_data_pointer = false;
@@ -1238,6 +1255,7 @@ void mouse_contour(int button, int state, int mouse_x, int mouse_y)
 	if (state == GLUT_DOWN && button == GLUT_LEFT_BUTTON)
 	{
 		show_legend = false; // always close lengend if left click happens
+		glutPostWindowRedisplay(contour_window);
 		contour_mouse_left_click(mouse_x, mouse_y);
 	}
 }
@@ -1294,19 +1312,22 @@ void mouse_motion(int /*x*/, int y)
 
 namespace
 {
-//
-// Vertex map:
-//     Z
-//     |
-//     1----------6
-//    /|         /|
-//   2----------5 |
-//   | |        | |
-//   | 0--------|-7-- Y
-//   |/         |/
-//   3----------4
-//  /
-// X
+/**
+ Vertex map of the view box:
+ \verbatim
+     Z
+     |
+     1----------6
+    /|         /|
+   2----------5 |
+   | |        | |
+   | 0--------|-7-- Y
+   |/         |/
+   3----------4
+  /
+ X
+ \endverbatim
+ */
 void init_surface_window(const VertexMatrix<GLdouble> &vertexmat,
 												 const NormalMatrix<GLdouble> &normalmat,
 												 const size_t &num_xpoints,
