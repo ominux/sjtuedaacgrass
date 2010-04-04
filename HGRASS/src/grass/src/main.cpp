@@ -26,7 +26,7 @@
 #endif // _WIN32
 
 #include <cstdlib>
-//#include <GL/glut.h>
+#include <GL/glut.h>
 
 #else
 
@@ -700,6 +700,7 @@ int main(int argc, char *argv[])
 #endif // PARALLEL_COMPUTING
 		mytpdd1 = new tpdd(toGraph->getN(), 
 											 toGraph->getE(), 
+											 toGraph->getM(),
 											 toGraph->getEdgeList());
 		printf("mytpdd1 done.\n");
 #ifdef PARALLEL_COMPUTING
@@ -711,6 +712,7 @@ int main(int argc, char *argv[])
 		{
 		mytpdd2 = new tpdd(toGraph2->getN(), 
 											 toGraph2->getE(), 
+											 toGraph2->getM(),
 											 toGraph2->getEdgeList());
 		printf("mytpdd2 done.\n");
 		}
@@ -721,9 +723,11 @@ int main(int argc, char *argv[])
 #ifdef PARALLEL_COMPUTING
 	}
 #endif // PARALLEL_COMPUTING
+	toGraph->calMosfetModelParameters();
 	delete toGraph;
 	toGraph = 0;
 #ifdef PARALLEL_COMPUTING
+	toGraph2->calMosfetModelParameters();
 	delete toGraph2;
 	toGraph2 = 0;
 #endif // PARALLEL_COMPUTING
@@ -1012,9 +1016,10 @@ Analysis_tpdd_differential_all(mytpdd1, symb_name);
 									 
 #ifndef GUI3D
 	map<string, double *> name_pvalue_map;
-	mytpdd1->get_name_ptrvalue_map(name_pvalue_map);
+	map<string, Mosfet *> name_pmosfet_map;
+	mytpdd1->get_name_ptrvalue_map(name_pvalue_map,name_pmosfet_map);
 	ptr_analysis1 = new Analysis(mytpdd1);
-	ptr_analyser1 = new Analyser(ptr_analysis1, name_pvalue_map);
+	ptr_analyser1 = new Analyser(ptr_analysis1, name_pvalue_map, name_pmosfet_map);
 	// Default scale type: phase_scale is always LINEAR.
 	Buffer::SCALE_TYPE freq_scale = Buffer::LOG;
 	Buffer::SCALE_TYPE magnitude_scale = Buffer::DB;
@@ -1049,9 +1054,10 @@ Analysis_tpdd_differential_all(mytpdd1, symb_name);
 			printf("| Phase Margin Evaluation |\n");
 			printf("+-------------------------+\n");
 			map<string, double *> name_pvalue_map1;
-			mytpdd1->get_name_ptrvalue_map(name_pvalue_map1);
+			map<string, Mosfet *> name_pmosfet_map1;
+			mytpdd1->get_name_ptrvalue_map(name_pvalue_map1,name_pmosfet_map1);
 			ptr_analysis1 = new Analysis(mytpdd1);
-			ptr_analyser1 = new Analyser(ptr_analysis1, name_pvalue_map1);
+			ptr_analyser1 = new Analyser(ptr_analysis1, name_pvalue_map1, name_pmosfet_map1);
 			assert(ptr_parameter_group_pm_x);
 			assert(ptr_parameter_group_pm_y);
 			ptr_parameter_group_pm_x->set_ptr(ptr_analyser1);
@@ -1089,9 +1095,10 @@ Analysis_tpdd_differential_all(mytpdd1, symb_name);
 			printf("| Band Width Evaluation |\n");
 			printf("+-----------------------+\n");
 			map<string, double *> name_pvalue_map2;
-			mytpdd2->get_name_ptrvalue_map(name_pvalue_map2);
+			map<string, Mosfet *> name_pmosfet_map2;
+			mytpdd2->get_name_ptrvalue_map(name_pvalue_map2,name_pmosfet_map2);
 			ptr_analysis2 = new Analysis(mytpdd2);
-			ptr_analyser2 = new Analyser(ptr_analysis2, name_pvalue_map2);
+			ptr_analyser2 = new Analyser(ptr_analysis2, name_pvalue_map2, name_pmosfet_map2);
 			assert(ptr_parameter_group_bw_x);
 			assert(ptr_parameter_group_bw_y);
 			ptr_parameter_group_bw_x->set_ptr(ptr_analyser2);

@@ -15,6 +15,7 @@
 
 #include "ToGraph.h"
 #include "tpdd_struct.h"
+#include "Mosfet.h"
 #include "tpddnode.h"
 #include "tnode.h"
 #include "comparable.h"
@@ -40,6 +41,9 @@ private:
 
 	/// the number of the edges in the graph of the circuit.
 		int E;							
+
+	/// the number of the mosfets in the circuit
+		int M;
 
 	/// the number of the VS edges in the graph of the circuit.
 		int VsN;						
@@ -167,7 +171,7 @@ public:
 		@param en the number of the edges in the graph of the circuit to analysis.
 		@param edge_list the list of the edges  in the graph of the circuit to analysis.
 	*/
-	tpdd(int nn,  int en, Edge_g * edge_list);
+	tpdd(int nn,  int en, int mn, Edge_g * edge_list);
 
 	/**
 		The destructor of tpdd.
@@ -472,7 +476,9 @@ public:
 	//! 2008-10-29 22:46
 	double change_value(const std::string &, double);
 	//! 2009-03-04
-	void get_name_ptrvalue_map(std::map<std::string, double *> &);
+	void get_name_ptrvalue_map(std::map<std::string, double *> &, 
+				   std::map<std::string, Mosfet *> &,
+				   bool full = false);
 
 	/**
 		Print the infos of the graph converted by the circuit to analysis.

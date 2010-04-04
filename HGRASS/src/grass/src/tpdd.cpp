@@ -53,6 +53,7 @@ tpdd::tpdd() :
 	SExpList			= NULL;
 	N					= 0;
 	E					= 0;
+	M					= 0;
 	VsN					= 0;
 	VcN					= 0;
 	CsN					= 0;
@@ -74,7 +75,7 @@ tpdd::tpdd() :
 	pSExpZero			= NULL;
 }
 
-tpdd::tpdd(int nn, int en, Edge_g *edge_list) :
+tpdd::tpdd(int nn, int en, int mn, Edge_g *edge_list) :
  	Object(), TotalNodes_(0), minusN(0), plusN(0), TotalSExpTpddNodeNum(0),
 	spanningN(0), totalSubNodes(0), subTreeSharingTimes(0),
 	tpddNodeSharingTimes(0), totalTpddNodes(0), reduceNodeNum(0),
@@ -85,6 +86,7 @@ tpdd::tpdd(int nn, int en, Edge_g *edge_list) :
 
 	N				= nn;
 	E				= en;
+	M				= mn;
 	SymbN			= 0;
 	TermN			= 0;
 	Elist			= NULL;
@@ -364,6 +366,7 @@ int tpdd::CreateEdgeList(Edge_g * edge_list)
 		Elist[e].lumped = 0;	// Not lumped
 		Elist[e].edgeindex = e;
   		
+		Elist[e].pMosfet = edge->pMosfet;
 		// Check syntax.
 		if (Elist[e].node1 == Elist[e].node2)
 		{
@@ -538,7 +541,7 @@ int tpdd::CreateSymbList()
 //	symbarray = new (SymbNode*)[Nsymb];
 	Slist = new SymbNode*[SymbN];
 //	pNode = SymbListTemp;
-	
+
 	for (int i = 0; i < SymbN; i++)
 	{
 		Slist[i] = pNode;
@@ -547,6 +550,21 @@ int tpdd::CreateSymbList()
 
 	SortSymbList();
 
+	for (int i = 0; i < SymbN; ++i)
+	{
+		pNode = Slist[i]; 
+		while (pNode)
+		{
+			if(*pNode->name != 'V' && *pNode->name != '^')
+			{
+				Mosfet* pMosfet = pNode->edge->pMosfet;
+				if(pMosfet && pMosfet->pModel)
+					pMosfet->pModel->setModelDevicePtr(pNode);
+			}
+			pNode = pNode->nextP;
+		}
+	}
+	
 	SymbNode *pParaNode;
 	TotalSymbN = 0;
 
@@ -4849,19 +4867,64 @@ double tpdd::change_value(const string &comp_name, double nv)
 }
 
 // Li Ji
-void tpdd::get_name_ptrvalue_map(map<string, double *> &name_pvalue_map)
+// Modified By Ma Diming @ 03-25-2010 for W/L Sizing
+void tpdd::get_name_ptrvalue_map(map<string, double *> &name_pvalue_map, map<string, Mosfet *> &name_pmosfet_map, 
+				 bool full)
 {
 	name_pvalue_map.clear();
+	name_pmosfet_map.clear();
+	Mosfet** spMosfet = NULL;
+	int sMosfetIndex = 0;
+	if(!full)
+	{
+		spMosfet = new Mosfet* [M];
+		for (int i=0;i<M;i++)
+			spMosfet[i] = NULL;
+	}
 	for (int i=0; i < SymbN; ++i)
 	{
 		SymbNode *pNode = Slist[i];
 		while (pNode)
 		{
-			char c = *pNode->name;
+			char* deviceName = pNode->name;
+			char c = deviceName[0];
 			// Ignore voltage sources and composite components
 			if (c!='V' && c != '^')
-				name_pvalue_map.insert(make_pair(pNode->name, &pNode->value));
+			{
+				Mosfet* pMosfet = pNode->edge->pMosfet;
+				if (full || pMosfet == NULL)
+				{
+					name_pvalue_map.insert(make_pair(pNode->name, &pNode->value));
+					name_pmosfet_map.insert(make_pair(pNode->name, (Mosfet*)NULL));
+				}
+				else
+				{
+					bool found = false;
+					for (int j=0;j<sMosfetIndex;j++)
+						if (spMosfet[j] == pMosfet)
+						{
+							found = true;
+							break;
+						}
+					if (!found)
+					{
+						char* WLSize = new char [MAX_CHARS];
+						sprintf(WLSize,"(W/L)_%s",pMosfet->name);
+						name_pvalue_map.insert(make_pair(WLSize, &pMosfet->value));
+						name_pmosfet_map.insert(make_pair(WLSize, pMosfet));
+						sprintf(WLSize,"W_%s",pMosfet->name);
+						name_pvalue_map.insert(make_pair(WLSize, &pMosfet->w));
+						name_pmosfet_map.insert(make_pair(WLSize, pMosfet));
+						sprintf(WLSize,"L_%s",pMosfet->name);
+						name_pvalue_map.insert(make_pair(WLSize, &pMosfet->l));
+						name_pmosfet_map.insert(make_pair(WLSize, pMosfet));
+						spMosfet[sMosfetIndex++] = pMosfet;
+					}
+				}
+			}
 			pNode = pNode->nextP;
 		}
 	}
+	if(!full)
+		delete [] spMosfet;
 }

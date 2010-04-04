@@ -19,6 +19,8 @@
 				* with the DLG command-line options.
 				*/
 
+using std::cout;
+using std::endl;
 typedef enum { 
 	cAC,
 	cDC,
@@ -43,7 +45,7 @@ extern class ToGraph *toGraph;
 typedef ANTLRCommonToken ANTLRToken;
 
 int
-read_input(char *filename )
+read_input(const char *filename )
 {
 	FILE *fp;
 	fp = fopen(filename,"r");
@@ -452,19 +454,33 @@ body	: NEWLINE
 			>>
 
 		| mosk:MOSFET mosn1:VALUE mosn2:VALUE mosn3:VALUE mosn4:VALUE 
-			mosm:IDENTIFIER (parameter_list)* NEWLINE
+			mosm:IDENTIFIER mosp1:IDENTIFIER EQUAL mosv1:VALUE
+			mosp2:IDENTIFIER EQUAL mosv2:VALUE (parameter_list)* NEWLINE
 		<<
-		  printf("\nMOSFET: %s, %s, %s, %s, %s, %s", 
+		#ifdef TRACE
+		printf("\nMOSFET: %s, %s, %s, %s, %s, %s, %s=%s, %s=%s", 
 				$mosk->getText(), 
 				$mosn1->getText(), $mosn2->getText(),
 				$mosn3->getText(), $mosn4->getText(), 
-				$mosm->getText() );
-		/*
-		theCurCkt->parse_mosfet($mosk->getText(), 
-				$mosn1->getText(), $mosn2->getText(),
-				$mosn3->getText(), $mosn4->getText(), 
-				$mosm->getText());
-			*/
+				$mosm->getText(),
+				$mosp1->getText(), $mosv1->getText(),
+				$mosp2->getText(), $mosv2->getText());
+		#endif
+		char* p1 = $mosp1->getText();
+		char* p2 = $mosp2->getText();
+		char* w = NULL;
+		char* l = NULL;
+		if(tolower(p1[0]) == 'w')
+			w = strdup($mosv1->getText());
+		else if(tolower(p1[0]) == 'l')
+			l = strdup($mosv1->getText());
+		if(tolower(p2[0]) == 'w')
+		        w = strdup($mosv2->getText());
+		else if(tolower(p2[0]) == 'l')
+		        l = strdup($mosv2->getText());
+		toGraph->parseMOSFET($mosk->getText(),$mosn1->getText(), $mosn2->getText(),
+				     $mosn3->getText(), $mosn4->getText(),$mosm->getText(),
+				     w,l);
 			>>
 
 		// subcircuit call
@@ -656,7 +672,16 @@ variable_list	:varnm:IDENTIFIER EQUAL varval:VALUE
 		>>
 		;
 
-parameter_list 	:IDENTIFIER EQUAL VALUE
+/*parameter_list 	:IDENTIFIER EQUAL VALUE
+		| IC EQUAL VALUEA {COMMA VALUEA {COMMA VALUEA}}
+		| ONOFF
+		| TEMP EQUAL	VALUE
+		;*/
+parameter_list 	: vark:IDENTIFIER EQUAL varv:VALUE
+		<<
+			//printf("\n<%s,%s>",$vark->getText(), $varv->getText());
+			//toGraph->parseMosfetParameter($varnk->getText(),$varv->getText());
+		>>
 		| IC EQUAL VALUEA {COMMA VALUEA {COMMA VALUEA}}
 		| ONOFF
 		| TEMP EQUAL	VALUE

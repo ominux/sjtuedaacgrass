@@ -11,6 +11,7 @@
 #include	<fstream>
 #include	"utility.h"
 #include	"tpdd_struct.h"
+#include	"Mosfet.h"
 
 /*// For storing a node.
 struct Node_g
@@ -41,6 +42,7 @@ class ToGraph
 private:
 	int		E;		// Num of edges in the graph.
 	int		N;		// Num of nodes in the graph.
+	int		M;
 	int		Nsrc;	// Num of indep srcs (only one allowed now)
 	int		Nout;	// Num of outputs (only one allowed now)
 	int		extra_nn;	// extra node number (-1, -2, ...)
@@ -51,6 +53,8 @@ private:
 	Edge_g	*out_edge;		// Points to the output edge
 	Node_g	*node_list;		// Head of the node list
 	Node_g	*node_tail;		// Tail of the node list
+	Mosfet  *mos_list;
+	Mosfet  *cur_mos;
 	std::ofstream	outFile;	// For output to a graph file.
 
 public:
@@ -60,9 +64,11 @@ public:
 	/* Methods for parsing the netlist. */
 	void readNetlist(const char *filename);
 	void writeGraph(const char *filename);  // Create a graph file.
+	void calMosfetModelParameters();
 	void getTitle(char *title) {this->title = CopyStr(title);}
 	inline int		getE()  		{return E;}
 	inline int		getN()  		{return N;}
+	inline int		getM()  		{return M;}
 	inline Edge_g 	*getEdgeList()	{ return edge_list; }
 	
 	void parseRLC(char *name, char *n1, char *n2, 
@@ -79,6 +85,8 @@ public:
 	// Parse a CCCS/CCVS branch.
 	void parseCCXS(char *name, char *n1, char *n2, char *Vname,
 					char *value, char *var_name);
+	void parseMOSFET(char *name, char *ng, char *nd, char *ns, char *nb,
+				char *model, char *w, char *l);
 
 private:
 	/* Methods for accessing the Node_g List */
@@ -92,6 +100,8 @@ private:
 	Edge_g *query_pair(char *pair_name); // query an edge with the pair_name
 	void add_edge(Edge_g *edge);
 	void add_edge_at_head(Edge_g *edge);
+	void add_mosfet(Mosfet* mosfet);
+	Mosfet *query_mosfet(char* name);
 };
 
 #endif

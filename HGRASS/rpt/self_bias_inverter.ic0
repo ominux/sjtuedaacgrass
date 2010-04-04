@@ -1,0 +1,18 @@
+* "simulator" "HSPICE" 
+* "version" "A-2008.03 64-BIT"
+* "format" "HSP"
+* "rundate" "21:50:46 04/04/2010 "
+* "netlist" "/home/madiming/EDA/AnalogCourse/HGRASS/examples/sp/self_bias_inverter.sp "
+* "runtitle" "self-bias inverter"
+* time =    0.            
+* temperature =   25.0000        
+*** BEGIN: Saved Operating Point ***                     
+.option 
++ gmindc=   1.0000p       
+.nodeset
++ base = 899.9981m       
++ in = 899.9981m       
++ inn = 899.9981m       
++ out = 899.9981m       
++ vdd =   1.8000        
+***   END: Saved Operating Point ***                     

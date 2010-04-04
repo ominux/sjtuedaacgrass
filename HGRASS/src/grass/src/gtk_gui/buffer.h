@@ -126,9 +126,12 @@ private:
 	struct ParameterController_
 	{
 		ParameterController_() :
+			pMosfet_(0),mosfet_flag_(-1),
 			ptr_value_(0), original_value_(0.0),
 			min_(0.0), max_(0.0), step_(0.0) {}
 		~ParameterController_() { ptr_value_ = 0; }
+		Mosfet *pMosfet_;
+		int	mosfet_flag_;
 		double *ptr_value_;
 		double  original_value_;
 		double  min_, max_, step_; // Variation settings

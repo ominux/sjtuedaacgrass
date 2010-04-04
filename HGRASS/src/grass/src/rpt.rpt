@@ -1,0 +1,102 @@
+g++ -MM utility.cpp -Wall -Wno-unused-variable -O3 -DGUI2D   -I. -I../pccts/h -I../inc -Igtk_gui > utility.d.$$; \
+sed 's,\(utility\)\.o[:]*,\1.o utility.d:,g' < utility.d.$$ > utility.d; \
+rm -f utility.d.$$
+g++ -MM tpddnode.cpp -Wall -Wno-unused-variable -O3 -DGUI2D   -I. -I../pccts/h -I../inc -Igtk_gui > tpddnode.d.$$; \
+sed 's,\(tpddnode\)\.o[:]*,\1.o tpddnode.d:,g' < tpddnode.d.$$ > tpddnode.d; \
+rm -f tpddnode.d.$$
+g++ -MM tpdd.cpp -Wall -Wno-unused-variable -O3 -DGUI2D   -I. -I../pccts/h -I../inc -Igtk_gui > tpdd.d.$$; \
+sed 's,\(tpdd\)\.o[:]*,\1.o tpdd.d:,g' < tpdd.d.$$ > tpdd.d; \
+rm -f tpdd.d.$$
+g++ -MM subtree.cpp -Wall -Wno-unused-variable -O3 -DGUI2D   -I. -I../pccts/h -I../inc -Igtk_gui > subtree.d.$$; \
+sed 's,\(subtree\)\.o[:]*,\1.o subtree.d:,g' < subtree.d.$$ > subtree.d; \
+rm -f subtree.d.$$
+g++ -MM netparser.cpp -Wall -Wno-unused-variable -O3 -DGUI2D   -I. -I../pccts/h -I../inc -Igtk_gui > netparser.d.$$; \
+sed 's,\(netparser\)\.o[:]*,\1.o netparser.d:,g' < netparser.d.$$ > netparser.d; \
+rm -f netparser.d.$$
+g++ -MM netgram.cpp -Wall -Wno-unused-variable -O3 -DGUI2D   -I. -I../pccts/h -I../inc -Igtk_gui > netgram.d.$$; \
+sed 's,\(netgram\)\.o[:]*,\1.o netgram.d:,g' < netgram.d.$$ > netgram.d; \
+rm -f netgram.d.$$
+g++ -MM mengxiaoxuan.cpp -Wall -Wno-unused-variable -O3 -DGUI2D   -I. -I../pccts/h -I../inc -Igtk_gui > mengxiaoxuan.d.$$; \
+sed 's,\(mengxiaoxuan\)\.o[:]*,\1.o mengxiaoxuan.d:,g' < mengxiaoxuan.d.$$ > mengxiaoxuan.d; \
+rm -f mengxiaoxuan.d.$$
+g++ -MM main.cpp -Wall -Wno-unused-variable -O3 -DGUI2D   -I. -I../pccts/h -I../inc -Igtk_gui > main.d.$$; \
+sed 's,\(main\)\.o[:]*,\1.o main.d:,g' < main.d.$$ > main.d; \
+rm -f main.d.$$
+g++ -MM list.cpp -Wall -Wno-unused-variable -O3 -DGUI2D   -I. -I../pccts/h -I../inc -Igtk_gui > list.d.$$; \
+sed 's,\(list\)\.o[:]*,\1.o list.d:,g' < list.d.$$ > list.d; \
+rm -f list.d.$$
+g++ -MM hasher.cpp -Wall -Wno-unused-variable -O3 -DGUI2D   -I. -I../pccts/h -I../inc -Igtk_gui > hasher.d.$$; \
+sed 's,\(hasher\)\.o[:]*,\1.o hasher.d:,g' < hasher.d.$$ > hasher.d; \
+rm -f hasher.d.$$
+g++ -MM complex.cpp -Wall -Wno-unused-variable -O3 -DGUI2D   -I. -I../pccts/h -I../inc -Igtk_gui > complex.d.$$; \
+sed 's,\(complex\)\.o[:]*,\1.o complex.d:,g' < complex.d.$$ > complex.d; \
+rm -f complex.d.$$
+g++ -MM analyser.cpp -Wall -Wno-unused-variable -O3 -DGUI2D   -I. -I../pccts/h -I../inc -Igtk_gui > analyser.d.$$; \
+sed 's,\(analyser\)\.o[:]*,\1.o analyser.d:,g' < analyser.d.$$ > analyser.d; \
+rm -f analyser.d.$$
+g++ -MM ToGraph.cpp -Wall -Wno-unused-variable -O3 -DGUI2D   -I. -I../pccts/h -I../inc -Igtk_gui > ToGraph.d.$$; \
+sed 's,\(ToGraph\)\.o[:]*,\1.o ToGraph.d:,g' < ToGraph.d.$$ > ToGraph.d; \
+rm -f ToGraph.d.$$
+g++ -MM DLexerBase.cpp -Wall -Wno-unused-variable -O3 -DGUI2D   -I. -I../pccts/h -I../inc -Igtk_gui > DLexerBase.d.$$; \
+sed 's,\(DLexerBase\)\.o[:]*,\1.o DLexerBase.d:,g' < DLexerBase.d.$$ > DLexerBase.d; \
+rm -f DLexerBase.d.$$
+g++ -MM DLGLexer.cpp -Wall -Wno-unused-variable -O3 -DGUI2D   -I. -I../pccts/h -I../inc -Igtk_gui > DLGLexer.d.$$; \
+sed 's,\(DLGLexer\)\.o[:]*,\1.o DLGLexer.d:,g' < DLGLexer.d.$$ > DLGLexer.d; \
+rm -f DLGLexer.d.$$
+g++ -MM Analysis.cpp -Wall -Wno-unused-variable -O3 -DGUI2D   -I. -I../pccts/h -I../inc -Igtk_gui > Analysis.d.$$; \
+sed 's,\(Analysis\)\.o[:]*,\1.o Analysis.d:,g' < Analysis.d.$$ > Analysis.d; \
+rm -f Analysis.d.$$
+g++ -MM ATokenBuffer.cpp -Wall -Wno-unused-variable -O3 -DGUI2D   -I. -I../pccts/h -I../inc -Igtk_gui > ATokenBuffer.d.$$; \
+sed 's,\(ATokenBuffer\)\.o[:]*,\1.o ATokenBuffer.d:,g' < ATokenBuffer.d.$$ > ATokenBuffer.d; \
+rm -f ATokenBuffer.d.$$
+g++ -MM AParser.cpp -Wall -Wno-unused-variable -O3 -DGUI2D   -I. -I../pccts/h -I../inc -Igtk_gui > AParser.d.$$; \
+sed 's,\(AParser\)\.o[:]*,\1.o AParser.d:,g' < AParser.d.$$ > AParser.d; \
+rm -f AParser.d.$$
+g++ -c AParser.cpp -o AParser.o -Wall -Wno-unused-variable -O3 -DGUI2D   -I. -I../pccts/h -I../inc -Igtk_gui
+g++ -c ATokenBuffer.cpp -o ATokenBuffer.o -Wall -Wno-unused-variable -O3 -DGUI2D   -I. -I../pccts/h -I../inc -Igtk_gui
+g++ -c Analysis.cpp -o Analysis.o -Wall -Wno-unused-variable -O3 -DGUI2D   -I. -I../pccts/h -I../inc -Igtk_gui
+g++ -c DLGLexer.cpp -o DLGLexer.o -Wall -Wno-unused-variable -O3 -DGUI2D   -I. -I../pccts/h -I../inc -Igtk_gui
+g++ -c DLexerBase.cpp -o DLexerBase.o -Wall -Wno-unused-variable -O3 -DGUI2D   -I. -I../pccts/h -I../inc -Igtk_gui
+g++ -c ToGraph.cpp -o ToGraph.o -Wall -Wno-unused-variable -O3 -DGUI2D   -I. -I../pccts/h -I../inc -Igtk_gui
+g++ -c analyser.cpp -o analyser.o -Wall -Wno-unused-variable -O3 -DGUI2D   -I. -I../pccts/h -I../inc -Igtk_gui
+g++ -c complex.cpp -o complex.o -Wall -Wno-unused-variable -O3 -DGUI2D   -I. -I../pccts/h -I../inc -Igtk_gui
+g++ -c hasher.cpp -o hasher.o -Wall -Wno-unused-variable -O3 -DGUI2D   -I. -I../pccts/h -I../inc -Igtk_gui
+g++ -c list.cpp -o list.o -Wall -Wno-unused-variable -O3 -DGUI2D   -I. -I../pccts/h -I../inc -Igtk_gui
+g++ -c main.cpp -o main.o -Wall -Wno-unused-variable -O3 -DGUI2D   \
+`pkg-config libglade-2.0 --cflags` -I. -I../pccts/h -I../inc -Igtk_gui
+g++ -c mengxiaoxuan.cpp -o mengxiaoxuan.o -Wall -Wno-unused-variable -O3 -DGUI2D   -I. -I../pccts/h -I../inc -Igtk_gui
+g++ -c netgram.cpp -o netgram.o -Wall -Wno-unused-variable -O3 -DGUI2D   -I. -I../pccts/h -I../inc -Igtk_gui
+g++ -c netparser.cpp -o netparser.o -Wall -Wno-unused-variable -O3 -DGUI2D   -I. -I../pccts/h -I../inc -Igtk_gui
+g++ -c subtree.cpp -o subtree.o -Wall -Wno-unused-variable -O3 -DGUI2D   -I. -I../pccts/h -I../inc -Igtk_gui
+g++ -c tpdd.cpp -o tpdd.o -Wall -Wno-unused-variable -O3 -DGUI2D   -I. -I../pccts/h -I../inc -Igtk_gui
+g++ -c tpddnode.cpp -o tpddnode.o -Wall -Wno-unused-variable -O3 -DGUI2D   -I. -I../pccts/h -I../inc -Igtk_gui
+g++ -c utility.cpp -o utility.o -Wall -Wno-unused-variable -O3 -DGUI2D   -I. -I../pccts/h -I../inc -Igtk_gui
+make --directory=gtk_gui
+make[1]: Entering directory `/home/madiming/EDA/AnalogCourse/grass-final/src/gtk_gui'
+g++ -MM callbacks.cpp -I../. -I../../pccts/h -I../../inc -I../gtk_gui > callbacks.d.$$; \
+sed 's,\(callbacks\)\.o[:]*,\1.o callbacks.d:,g' < callbacks.d.$$ > callbacks.d; \
+rm -f callbacks.d.$$
+g++ -MM buffer.cpp -I../. -I../../pccts/h -I../../inc -I../gtk_gui > buffer.d.$$; \
+sed 's,\(buffer\)\.o[:]*,\1.o buffer.d:,g' < buffer.d.$$ > buffer.d; \
+rm -f buffer.d.$$
+g++ -MM auxiliary.cpp -I../. -I../../pccts/h -I../../inc -I../gtk_gui > auxiliary.d.$$; \
+sed 's,\(auxiliary\)\.o[:]*,\1.o auxiliary.d:,g' < auxiliary.d.$$ > auxiliary.d; \
+rm -f auxiliary.d.$$
+make[1]: Leaving directory `/home/madiming/EDA/AnalogCourse/grass-final/src/gtk_gui'
+make[1]: Entering directory `/home/madiming/EDA/AnalogCourse/grass-final/src/gtk_gui'
+g++ -c auxiliary.cpp -o auxiliary.o -Wall -Wno-unused-variable -O3 -DGUI2D   `pkg-config libglade-2.0 --cflags` -I../. -I../../pccts/h -I../../inc -I../gtk_gui
+g++ -c buffer.cpp -o buffer.o -Wall -Wno-unused-variable -O3 -DGUI2D   `pkg-config libglade-2.0 --cflags` -I../. -I../../pccts/h -I../../inc -I../gtk_gui
+g++ -c callbacks.cpp -o callbacks.o -Wall -Wno-unused-variable -O3 -DGUI2D   `pkg-config libglade-2.0 --cflags` -I../. -I../../pccts/h -I../../inc -I../gtk_gui
+ar rv libgtkgui.a auxiliary.o buffer.o callbacks.o curve.o
+r - auxiliary.o
+r - buffer.o
+r - callbacks.o
+r - curve.o
+make[1]: Leaving directory `/home/madiming/EDA/AnalogCourse/grass-final/src/gtk_gui'
+Building ./grass-GUI2D-Linux-release-Serial ...
+
+
+g++ -o grass-GUI2D-Linux-release-Serial AParser.o ATokenBuffer.o Analysis.o DLGLexer.o DLexerBase.o ToGraph.o analyser.o complex.o hasher.o list.o main.o mengxiaoxuan.o netgram.o netparser.o subtree.o tpdd.o tpddnode.o utility.o gtk_gui/libgtkgui.a  `pkg-config libglade-2.0 --libs`  
+
+
+Build ./grass-GUI2D-Linux-release-Serial successfully

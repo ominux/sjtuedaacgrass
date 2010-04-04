@@ -6,7 +6,7 @@
  * With AHPCRC, University of Minnesota
  * ANTLR Version 1.33MR33
  *
- *   e:\work\station\gccnew\pccts\bin\antlr.exe -CC netgram.g
+ *   /home/shared-folder/pccts/bin/antlr -CC netgram.g
  *
  */
 
@@ -37,7 +37,6 @@
 
 using std::cout;
 using std::endl;
-
 typedef enum { 
   cAC,
   cDC,
@@ -57,10 +56,7 @@ static OutputCmd cur_cmd = cUnknown;
 #include "acan.h"
 */
 
-extern ToGraph *toGraph;
-#ifdef PARALLEL_COMPUTING
-extern ToGraph *toGraph2;
-#endif // PARALLEL_COMPUTING
+extern class ToGraph *toGraph;
 
 typedef ANTLRCommonToken ANTLRToken;
 
@@ -118,9 +114,6 @@ netparser::title(void)
   fprintf(stderr,"\n%s", tt->getText());
 #endif
   toGraph->getTitle( tt->getText()); 
-#ifdef PARALLEL_COMPUTING
-  toGraph2->getTitle( tt->getText()); 
-#endif // PARALLEL_COMPUTING
   /* theCurCkt->add_title($tt->getText());*/
  consume();
   zzmatch(NEWLINE); consume();
@@ -134,7 +127,7 @@ void
 netparser::body(void)
 {
   zzRULE;
-  ANTLRTokenPtr cm=NULL, vk=NULL, vn1=NULL, vn2=NULL, vv=NULL, vm=NULL, vp=NULL, ik=NULL, in1=NULL, in2=NULL, iv=NULL, im=NULL, ip=NULL, vccsk=NULL, vccsn1=NULL, vccsn2=NULL, vccscn1=NULL, vccscn2=NULL, vccsv=NULL, vccsvar=NULL, vcvsk=NULL, vcvsn1=NULL, vcvsn2=NULL, vcvscn1=NULL, vcvscn2=NULL, vcvsv=NULL, vcvsvar=NULL, cccsk=NULL, cccsn1=NULL, cccsn2=NULL, cccscid=NULL, cccsv=NULL, cccsvar=NULL, ccvsk=NULL, ccvsn1=NULL, ccvsn2=NULL, ccvscid=NULL, ccvsv=NULL, ccvsvar=NULL, rk=NULL, rn1=NULL, rn2=NULL, rv=NULL, rvar=NULL, ck=NULL, cn1=NULL, cn2=NULL, cv=NULL, cvar=NULL, indk=NULL, indn1=NULL, indn2=NULL, indv=NULL, indvar=NULL, sk=NULL, sn1=NULL, sn2=NULL, dk=NULL, dn1=NULL, dn2=NULL, dm=NULL, bjk=NULL, bjn1=NULL, bjn2=NULL, bjn3=NULL, bjn4=NULL, bjm=NULL, jfk=NULL, jfn1=NULL, jfn2=NULL, jfn3=NULL, jfm=NULL, mosk=NULL, mosn1=NULL, mosn2=NULL, mosn3=NULL, mosn4=NULL, mosm=NULL, callid=NULL, callnd=NULL, callnm=NULL;
+  ANTLRTokenPtr cm=NULL, vk=NULL, vn1=NULL, vn2=NULL, vv=NULL, vm=NULL, vp=NULL, ik=NULL, in1=NULL, in2=NULL, iv=NULL, im=NULL, ip=NULL, vccsk=NULL, vccsn1=NULL, vccsn2=NULL, vccscn1=NULL, vccscn2=NULL, vccsv=NULL, vccsvar=NULL, vcvsk=NULL, vcvsn1=NULL, vcvsn2=NULL, vcvscn1=NULL, vcvscn2=NULL, vcvsv=NULL, vcvsvar=NULL, cccsk=NULL, cccsn1=NULL, cccsn2=NULL, cccscid=NULL, cccsv=NULL, cccsvar=NULL, ccvsk=NULL, ccvsn1=NULL, ccvsn2=NULL, ccvscid=NULL, ccvsv=NULL, ccvsvar=NULL, rk=NULL, rn1=NULL, rn2=NULL, rv=NULL, rvar=NULL, ck=NULL, cn1=NULL, cn2=NULL, cv=NULL, cvar=NULL, indk=NULL, indn1=NULL, indn2=NULL, indv=NULL, indvar=NULL, sk=NULL, sn1=NULL, sn2=NULL, dk=NULL, dn1=NULL, dn2=NULL, dm=NULL, bjk=NULL, bjn1=NULL, bjn2=NULL, bjn3=NULL, bjn4=NULL, bjm=NULL, jfk=NULL, jfn1=NULL, jfn2=NULL, jfn3=NULL, jfm=NULL, mosk=NULL, mosn1=NULL, mosn2=NULL, mosn3=NULL, mosn4=NULL, mosm=NULL, mosp1=NULL, mosv1=NULL, mosp2=NULL, mosv2=NULL, callid=NULL, callnd=NULL, callnm=NULL;
   if ( (LA(1)==NEWLINE) ) {
     zzmatch(NEWLINE); consume();
   }
@@ -219,16 +212,10 @@ netparser::body(void)
         vn2->getText(), ( vv == NULL? NULL: vv->getText()),
         ( vm == NULL? NULL: vm->getText()) ); 
 #endif
-				toGraph->parseSRC( vk->getText(), 
-													 vn1->getText(),  vn2->getText(), 
-													 ( vv != NULL ? vv->getText():NULL),
-													 ( vm == NULL? NULL: vm->getText()) );
-#ifdef PARALLEL_COMPUTING
-				toGraph2->parseSRC( vk->getText(), 
-													 vn1->getText(),  vn2->getText(), 
-													 ( vv != NULL ? vv->getText():NULL),
-													 ( vm == NULL? NULL: vm->getText()) );
-#endif // PARALLEL_COMPUTING
+        toGraph->parseSRC( vk->getText(), 
+        vn1->getText(),  vn2->getText(), 
+        ( vv != NULL ? vv->getText():NULL),
+        ( vm == NULL? NULL: vm->getText()) );
         /*
         theCurCkt->parse_vi($vk->getText(), 
         $vn1->getText(), $vn2->getText(), 
@@ -400,16 +387,10 @@ netparser::body(void)
           in2->getText(), ( iv == NULL? NULL: iv->getText()),
           ( im == NULL? NULL: im->getText()) ); 
 #endif
-					toGraph->parseSRC( ik->getText(), 
-														 in1->getText(),  in2->getText(), 
-														 ( iv != NULL ?  iv->getText():NULL),
-														 ( im == NULL? NULL: im->getText()) ); 
-#ifdef PARALLEL_COMPUTING
-					toGraph2->parseSRC( ik->getText(), 
-														 in1->getText(),  in2->getText(), 
-														 ( iv != NULL ?  iv->getText():NULL),
-														 ( im == NULL? NULL: im->getText()) ); 
-#endif // PARALLEL_COMPUTING
+          toGraph->parseSRC( ik->getText(), 
+          in1->getText(),  in2->getText(), 
+          ( iv != NULL ?  iv->getText():NULL),
+          ( im == NULL? NULL: im->getText()) ); 
           /*
           theCurCkt->parse_vi($ik->getText(), 
           $in1->getText(), $in2->getText(), 
@@ -550,18 +531,11 @@ netparser::body(void)
             ( vccsvar != NULL ? vccsvar->getText():NULL) );
 #endif
             
-						toGraph->parseVCXS( vccsk->getText(),  vccsn1->getText(), 
-																vccsn2->getText(),  vccscn1->getText(), 
-																vccscn2->getText(), 
-																( vccsv != NULL ? vccsv->getText():NULL),
+		toGraph->parseVCXS( vccsk->getText(),  vccsn1->getText(), 
+            vccsn2->getText(),  vccscn1->getText(), 
+            vccscn2->getText(), 
+            ( vccsv != NULL ? vccsv->getText():NULL),
             ( vccsvar != NULL ? vccsvar->getText():NULL));
-#ifdef PARALLEL_COMPUTING
-						toGraph2->parseVCXS( vccsk->getText(),  vccsn1->getText(), 
-																vccsn2->getText(),  vccscn1->getText(), 
-																vccscn2->getText(), 
-																( vccsv != NULL ? vccsv->getText():NULL),
-            ( vccsvar != NULL ? vccsvar->getText():NULL));
-#endif // PARALLEL_COMPUTING
             /*
             theCurCkt->parse_vcs($vccsk->getText(), $vccsn1->getText(), 
             $vccsn2->getText(), $vccscn1->getText(), 
@@ -614,18 +588,11 @@ netparser::body(void)
               ( vcvsvar != NULL ? vcvsvar->getText():NULL) );
 #endif
               
-							toGraph->parseVCXS( vcvsk->getText(),  vcvsn1->getText(), 
-																	vcvsn2->getText(),  vcvscn1->getText(),
-																	vcvscn2->getText(), 
-																	( vcvsv != NULL ? vcvsv->getText():NULL),
-																	( vcvsvar != NULL ? vcvsvar->getText():NULL));
-#ifdef PARALLEL_COMPUTING
-							toGraph2->parseVCXS( vcvsk->getText(),  vcvsn1->getText(), 
-																	vcvsn2->getText(),  vcvscn1->getText(),
-																	vcvscn2->getText(), 
-																	( vcvsv != NULL ? vcvsv->getText():NULL),
-																	( vcvsvar != NULL ? vcvsvar->getText():NULL));
-#endif // PARALLEL_COMPUTING
+		  toGraph->parseVCXS( vcvsk->getText(),  vcvsn1->getText(), 
+              vcvsn2->getText(),  vcvscn1->getText(),
+              vcvscn2->getText(), 
+              ( vcvsv != NULL ? vcvsv->getText():NULL),
+              ( vcvsvar != NULL ? vcvsvar->getText():NULL));
               /*
               theCurCkt->parse_vcs($vcvsk->getText(), $vcvsn1->getText(), 
               $vcvsn2->getText(), $vcvscn1->getText(),
@@ -674,17 +641,11 @@ netparser::body(void)
                 ( cccsvar != NULL ? cccsvar->getText():NULL) );
 #endif
                 
-								toGraph->parseCCXS( cccsk->getText(),  cccsn1->getText(), 
-																		cccsn2->getText(),  cccscid->getText(), 
-																		( cccsv != NULL ? cccsv->getText():NULL),
-																		( cccsvar != NULL ? cccsvar->getText():NULL));
-#ifdef PARALLEL_COMPUTING
-								toGraph2->parseCCXS( cccsk->getText(),  cccsn1->getText(), 
-																		cccsn2->getText(),  cccscid->getText(), 
-																		( cccsv != NULL ? cccsv->getText():NULL),
-																		( cccsvar != NULL ? cccsvar->getText():NULL));
-#endif // PARALLEL_COMPUTING
-								/*
+		  toGraph->parseCCXS( cccsk->getText(),  cccsn1->getText(), 
+                cccsn2->getText(),  cccscid->getText(), 
+                ( cccsv != NULL ? cccsv->getText():NULL),
+                ( cccsvar != NULL ? cccsvar->getText():NULL));
+                /*
                 theCurCkt->parse_ccs($cccsk->getText(), $cccsn1->getText(), 
                 $cccsn2->getText(), $cccscid->getText(), 
                 ($cccsv != NULL ?$cccsv->getText():NULL),
@@ -731,16 +692,10 @@ netparser::body(void)
                   ( ccvsvar != NULL ? ccvsvar->getText():NULL) );
 #endif
                   
-									toGraph->parseCCXS( ccvsk->getText(),  ccvsn1->getText(), 
-																			ccvsn2->getText(),  ccvscid->getText(), 
-																			( ccvsv != NULL ? ccvsv->getText():NULL),
-																			( ccvsvar != NULL ? ccvsvar->getText():NULL));
-#ifdef PARALLEL_COMPUTING
-									toGraph2->parseCCXS( ccvsk->getText(),  ccvsn1->getText(), 
-																			ccvsn2->getText(),  ccvscid->getText(), 
-																			( ccvsv != NULL ? ccvsv->getText():NULL),
-																			( ccvsvar != NULL ? ccvsvar->getText():NULL));
-#endif // PARALLEL_COMPUTING
+		  toGraph->parseCCXS( ccvsk->getText(),  ccvsn1->getText(), 
+                  ccvsn2->getText(),  ccvscid->getText(), 
+                  ( ccvsv != NULL ? ccvsv->getText():NULL),
+                  ( ccvsvar != NULL ? ccvsvar->getText():NULL));
                   /*
                   theCurCkt->parse_ccs($ccvsk->getText(), $ccvsn1->getText(), 
                   $ccvsn2->getText(), $ccvscid->getText(), 
@@ -784,18 +739,11 @@ netparser::body(void)
                     ( rvar != NULL ? rvar->getText():NULL) ); 
 #endif
                     
-										toGraph->parseRLC(
-											rk->getText(), 
-											rn1->getText(),  rn2->getText(), 
-											( rv != NULL ? rv->getText():NULL), 
-											( rvar != NULL ? rvar->getText():NULL)); 
-#ifdef PARALLEL_COMPUTING
-										toGraph2->parseRLC(
-											rk->getText(), 
-											rn1->getText(),  rn2->getText(), 
-											( rv != NULL ? rv->getText():NULL), 
-											( rvar != NULL ? rvar->getText():NULL)); 
-#endif // PARALLEL_COMPUTING
+		  toGraph->parseRLC(
+                    rk->getText(), 
+                    rn1->getText(),  rn2->getText(), 
+                    ( rv != NULL ? rv->getText():NULL), 
+                    ( rvar != NULL ? rvar->getText():NULL)); 
                     /*
                     theCurCkt->parse_rlc($rk->getText(), $rn1->getText(), 
                     $rn2->getText(), 
@@ -838,17 +786,11 @@ netparser::body(void)
                       ( cv != NULL ? cv->getText():NULL), 
                       ( cvar != NULL ? cvar->getText():NULL) );
 #endif
-											toGraph->parseRLC(
-												ck->getText(),  cn1->getText(),  cn2->getText(), 
-												( cv != NULL ? cv->getText():NULL), 
-												( cvar != NULL ? cvar->getText():NULL) );
-#ifdef PARALLEL_COMPUTING
-											toGraph2->parseRLC(
-												ck->getText(),  cn1->getText(),  cn2->getText(), 
-												( cv != NULL ? cv->getText():NULL), 
-												( cvar != NULL ? cvar->getText():NULL) );
-#endif // PARALLEL_COMPUTING
-											/*
+                      toGraph->parseRLC(
+                      ck->getText(),  cn1->getText(),  cn2->getText(), 
+                      ( cv != NULL ? cv->getText():NULL), 
+                      ( cvar != NULL ? cvar->getText():NULL) );
+                      /*
                       theCurCkt->parse_rlc($ck->getText(), $cn1->getText(), 
                       $cn2->getText(), 
                       ($cv != NULL ?$cv->getText():NULL), 
@@ -891,16 +833,10 @@ netparser::body(void)
                         ( indvar != NULL ? indvar->getText():NULL) );
 #endif
                         
-												toGraph->parseRLC(
-													indk->getText(),  indn1->getText(),  indn2->getText(), 
-													( indv != NULL ? indv->getText():NULL),
-													( indvar != NULL ? indvar->getText():NULL) );
-#ifdef PARALLEL_COMPUTING
-												toGraph2->parseRLC(
-													indk->getText(),  indn1->getText(),  indn2->getText(), 
-													( indv != NULL ? indv->getText():NULL),
-													( indvar != NULL ? indvar->getText():NULL) );
-#endif // PARALLEL_COMPUTING
+		  toGraph->parseRLC(
+                        indk->getText(),  indn1->getText(),  indn2->getText(), 
+                        ( indv != NULL ? indv->getText():NULL),
+                        ( indvar != NULL ? indvar->getText():NULL) );
                         /*
                         theCurCkt->parse_rlc($indk->getText(), 
                         $indn1->getText(), $indn2->getText(), 
@@ -1185,6 +1121,20 @@ netparser::body(void)
                                   zzmatch(IDENTIFIER);
                                   mosm = (ANTLRTokenPtr)LT(1);
  consume();
+                                  zzmatch(IDENTIFIER);
+                                  mosp1 = (ANTLRTokenPtr)LT(1);
+ consume();
+                                  zzmatch(EQUAL); consume();
+                                  zzmatch(VALUE);
+                                  mosv1 = (ANTLRTokenPtr)LT(1);
+ consume();
+                                  zzmatch(IDENTIFIER);
+                                  mosp2 = (ANTLRTokenPtr)LT(1);
+ consume();
+                                  zzmatch(EQUAL); consume();
+                                  zzmatch(VALUE);
+                                  mosv2 = (ANTLRTokenPtr)LT(1);
+ consume();
                                   {
                                     while ( (setwd6[LA(1)]&0x8) ) {
                                       parameter_list();
@@ -1192,17 +1142,30 @@ netparser::body(void)
                                   }
                                   zzmatch(NEWLINE);
                                   
-                                  printf("\nMOSFET: %s, %s, %s, %s, %s, %s", 
+#ifdef TRACE
+                                  printf("\nMOSFET: %s, %s, %s, %s, %s, %s, %s=%s, %s=%s", 
                                   mosk->getText(), 
                                   mosn1->getText(),  mosn2->getText(),
                                   mosn3->getText(),  mosn4->getText(), 
-                                  mosm->getText() );
-                                  /*
-                                  theCurCkt->parse_mosfet($mosk->getText(), 
-                                  $mosn1->getText(), $mosn2->getText(),
-                                  $mosn3->getText(), $mosn4->getText(), 
-                                  $mosm->getText());
-                                  */
+                                  mosm->getText(),
+                                  mosp1->getText(),  mosv1->getText(),
+                                  mosp2->getText(),  mosv2->getText());
+#endif
+                                  char* p1 =  mosp1->getText();
+                                  char* p2 =  mosp2->getText();
+                                  char* w = NULL;
+                                  char* l = NULL;
+                                  if(tolower(p1[0]) == 'w')
+                                  w = strdup( mosv1->getText());
+                                  else if(tolower(p1[0]) == 'l')
+                                  l = strdup( mosv1->getText());
+                                  if(tolower(p2[0]) == 'w')
+                                  w = strdup( mosv2->getText());
+                                  else if(tolower(p2[0]) == 'l')
+                                  l = strdup( mosv2->getText());
+                                  toGraph->parseMOSFET( mosk->getText(), mosn1->getText(),  mosn2->getText(),
+                                  mosn3->getText(),  mosn4->getText(), mosm->getText(),
+                                  w,l);
  consume();
                                 }
                                 else {
@@ -1774,10 +1737,19 @@ void
 netparser::parameter_list(void)
 {
   zzRULE;
+  ANTLRTokenPtr vark=NULL, varv=NULL;
   if ( (LA(1)==IDENTIFIER) ) {
-    zzmatch(IDENTIFIER); consume();
+    zzmatch(IDENTIFIER);
+    vark = (ANTLRTokenPtr)LT(1);
+ consume();
     zzmatch(EQUAL); consume();
-    zzmatch(VALUE); consume();
+    zzmatch(VALUE);
+    varv = (ANTLRTokenPtr)LT(1);
+
+    
+    //printf("\n<%s,%s>",$vark->getText(), $varv->getText());
+    //toGraph->parseMosfetParameter($varnk->getText(),$varv->getText());
+ consume();
   }
   else {
     if ( (LA(1)==IC) ) {
@@ -1874,16 +1846,10 @@ netparser::outvar(void)
     ( varn2 == NULL? NULL: varn2->getText()),
     ( var   == NULL? NULL: var->getText()) );
 #endif
-		toGraph->parseOUT( varnm->getText(), 
-											 ( varn1 == NULL? NULL: varn1->getText()), 
-											 ( varn2 == NULL? NULL: varn2->getText()),
-											 ( var   == NULL? NULL: var->getText()) );
-#ifdef PARALLEL_COMPUTING
-		toGraph2->parseOUT( varnm->getText(), 
-											 ( varn1 == NULL? NULL: varn1->getText()), 
-											 ( varn2 == NULL? NULL: varn2->getText()),
-											 ( var   == NULL? NULL: var->getText()) );
-#endif // PARALLEL_COMPUTING
+    toGraph->parseOUT( varnm->getText(), 
+    ( varn1 == NULL? NULL: varn1->getText()), 
+    ( varn2 == NULL? NULL: varn2->getText()),
+    ( var   == NULL? NULL: var->getText()) );
     /*
     if(!theCurCkt->ac_mgr->get_output_num()){
       theCurCkt->parse_print($varnm->getText(), 
@@ -1903,14 +1869,9 @@ netparser::outvar(void)
     varn1->getText(), 
     ( varn2 != NULL?  varn2->getText():NULL));
 #endif
-		toGraph->parseSRC(
-			varnm->getText(),  varn1->getText(), 
-			( varn2 != NULL?  varn2->getText():NULL), NULL, NULL);
-#ifdef PARALLEL_COMPUTING
-		toGraph2->parseSRC(
-			varnm->getText(),  varn1->getText(), 
-			( varn2 != NULL?  varn2->getText():NULL), NULL, NULL);
-#endif // PARALLEL_COMPUTING
+    toGraph->parseSRC(
+    varnm->getText(),  varn1->getText(), 
+    ( varn2 != NULL?  varn2->getText():NULL), NULL, NULL);
     /*
     theCurCkt->parse_ac_input($varnm->getText(), 
     $varn1->getText(), ($varn2 != NULL? $varn2->getText():NULL));

@@ -69,8 +69,8 @@ void Buffer::init_buffer()
 		double freq = (freq_scale_==LIN)? freq_vector_[i]: pow(10.0, freq_vector_[i]);
 		complex_double z(ptr_analyser_->transfer_function(freq));
 		phase_vector_[i] = arg(z) * 180.0 / PI_; // Degree
-		if (phase_vector_[i] > EPS_)
-		 	phase_vector_[i] -= 360.0; // keep phase continuous.
+		//if (phase_vector_[i] > EPS_)
+		// 	phase_vector_[i] -= 360.0; // keep phase continuous.
 		double magn_z = abs(z);
 		if (magnitude_scale_ == LIN)
 		{
@@ -476,6 +476,9 @@ void Buffer::reset_parameter_value()
 	double original_value =
 	 	ptr_current_parameter_controller_->original_value_;
 	*ptr_current_parameter_controller_->ptr_value_ = original_value;
+	if(ptr_current_parameter_controller_->pMosfet_)
+	  ptr_current_parameter_controller_->pMosfet_->updateValue(original_value,
+								   ptr_current_parameter_controller_->mosfet_flag_);
 	double min = original_value, max = min + min, step = min;
 	ptr_current_parameter_controller_->min_ = min;
 	ptr_current_parameter_controller_->max_ = max;
@@ -502,6 +505,9 @@ void Buffer::change_parameter_value(double d)
 	if (fabs(*ptr_current_parameter_controller_->ptr_value_ - new_value) < EPS_)
 		return ; // Do nothing if the value does not change.
 	*ptr_current_parameter_controller_->ptr_value_ = new_value;
+	if(ptr_current_parameter_controller_->pMosfet_)
+	  ptr_current_parameter_controller_->pMosfet_->updateValue(new_value,
+								   ptr_current_parameter_controller_->mosfet_flag_);
 	print_on_par_value_entry(new_value / current_unit_);
 	evaluate_all(); // Reinit buffers and boundaries
 	refresh_all();  // Redraw all curves and marks
@@ -592,6 +598,10 @@ void Buffer::set_parameter_controller(const string &par_name)
 		assert(ptr_current_parameter_controller_);
 		ptr_current_parameter_controller_->ptr_value_ =
 			ptr_analyser_->get_value_pointer(par_name);
+		ptr_current_parameter_controller_->pMosfet_ =
+			ptr_analyser_->get_mosfet_pointer(par_name);
+		ptr_current_parameter_controller_->mosfet_flag_ = 
+			ptr_analyser_->get_mosfet_flag(par_name);
 		ptr_current_parameter_controller_->original_value_ =
 			*ptr_current_parameter_controller_->ptr_value_;
 		double original_value = ptr_current_parameter_controller_->original_value_;
@@ -631,6 +641,9 @@ void Buffer::set_parameter_controller(const string &par_name)
 		ptr_current_parameter_controller_->step_ / current_unit_ * 2.0);
 	gtk_range_set_value(GTK_RANGE(par_value_hscale_), value / current_unit_);
 	*ptr_current_parameter_controller_->ptr_value_ = value;
+	if(ptr_current_parameter_controller_->pMosfet_)
+	  ptr_current_parameter_controller_->pMosfet_->updateValue(value,
+								   ptr_current_parameter_controller_->mosfet_flag_);
 }
 
 void Buffer::set_parameter_controller_min(double min)

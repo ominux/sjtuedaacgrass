@@ -13,6 +13,7 @@
 
 #include "tpdd_global.h"
 
+class Mosfet;
 /** 
 	A structure for storing a node.
 */
@@ -50,6 +51,7 @@ typedef struct Edge_g
 	/// Name of the pairing edge
 	char	*pname;	
 	
+	Mosfet *pMosfet;
 	/// Value of the element
 	double	value;		
 
@@ -91,6 +93,7 @@ struct Edge
 	
 	/// value (R/L/C/Gain) read from netlist.
 	double	value;		
+	Mosfet *pMosfet;
 
 	/// the lumped flag. 1 = lumped, 0 = non-lumped.
 	int		lumped;		

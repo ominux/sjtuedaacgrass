@@ -198,15 +198,16 @@ proc build_cir {SPFile} {
 			set input [lindex $line 1]
 			#puts $input
 			set input_node [lindex $line 2]
-			set input_ac_val [lindex $line 3]
+			set input_node_gnd [lindex $line 3]
+			set input_ac_val [lindex $line 4]
 			#puts $input_node
-			set output [lindex $line 4]
+			set output [lindex $line 5]
 			#puts $output
-			set output_node [lindex $line 5]
+			set output_node [lindex $line 6]
 			#puts $output_node
 
 			#puts artificial input for grass handling
-			puts $channel "$input $input_node 0 ac $input_ac_val"
+			puts $channel "$input $input_node $input_node_gnd ac $input_ac_val"
 	
 		} elseif {[string match -nocase {i*} $line]} {
 				#cut independet current source	
@@ -309,7 +310,11 @@ proc build_cir {SPFile} {
 
 			#puts [llength $m_inst_para($inst_num)]
 			#comment this line
-			puts $channel [join "* $line" ]
+			set linetemp {}
+			for {set i 5} {$i < [llength $line]} {incr i} {
+				lappend linetemp [lindex $line $i]
+			}
+			puts $channel [join "M$inst_num $node_D $node_G $node_S $node_B $linetemp"]
 			
 			for {set i 0} {$i < [llength $m_inst_para($inst_num)]} {set i [expr $i+2]} { 
 				set para_name [lindex $m_inst_para($inst_num) $i]
@@ -462,7 +467,7 @@ proc replace_node {fileName} {
 	set nodeIndex 20000
 	foreach n $nodeList {
 		incr nodeIndex
-		if {[catch {exec sed -i "1!{/^\.\[^(\]*(\[^)\]\\+)\\|^\[rlcvighfeRLCVIGHFE\]/s/\\<$n\\>/$nodeIndex/g}" $fileName}]} {
+		if {[catch {exec sed -i "1!{/^\.\[^(\]*(\[^)\]\\+)\\|^\[rlcvighfemRLCVIGHFEM\]/s/\\<$n\\>/$nodeIndex/g}" $fileName}]} {
 			break;
 		} 
 	}

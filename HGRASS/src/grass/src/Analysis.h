@@ -23,6 +23,7 @@
 #include	"tpdd_global.h"
 
 //#include	"Enumerator.h"
+#include	"Mosfet.h"
 #include    	"tpdd.h"
 
 struct E_value{
