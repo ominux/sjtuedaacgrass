@@ -1,5 +1,5 @@
 Simple NMOS Inverter
-*IODEF: VIN in 1 VOUT out
+*IODEF: VIN in 0 1 VOUT out
 .lib 'cmos25.lib' tt
 
 *.lib 'mix025.lib' tt

@@ -1,7 +1,5 @@
-Analysis.o Analysis.d: Analysis.cpp Analysis.h ../inc/globals.h ../inc/complex_t.h \
-  ../inc/unixstd.h ../inc/stddefs.h ./hasher.h ../inc/comparable.h \
-  ../inc/object.h ../inc/classdef.h ./list.h ../inc/object.h \
-  ../inc/hashcach.h ../inc/comparable.h ../inc/message.h ../inc/utility.h \
-  ../inc/globals.h tpdd_global.h utility.h tpdd.h ToGraph.h tpdd_struct.h \
-  tpddnode.h ../inc/tnode.h subtree.h ../inc/comparable.h class_id.h \
-  ../inc/complex_t.h option.h hasher.h
+Analysis.o Analysis.d: Analysis.cpp Analysis.h globals.h complex_t.h unixstd.h \
+  stddefs.h hasher.h comparable.h object.h classdef.h list.h hashcach.h \
+  message.h utility.h tpdd_global.h Mosfet.h tpdd_struct.h tpdd.h \
+  ToGraph.h tpddnode.h ../inc/tnode.h ../inc/comparable.h \
+  ../inc/classdef.h subtree.h class_id.h option.h

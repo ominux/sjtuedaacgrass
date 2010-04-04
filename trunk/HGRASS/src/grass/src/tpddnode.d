@@ -1,6 +1,4 @@
 tpddnode.o tpddnode.d: tpddnode.cpp tpddnode.h tpdd_struct.h tpdd_global.h utility.h \
-  ../inc/globals.h ../inc/complex_t.h ../inc/unixstd.h ../inc/stddefs.h \
-  ./hasher.h ../inc/comparable.h ../inc/object.h ../inc/classdef.h \
-  ./list.h ../inc/object.h ../inc/hashcach.h ../inc/comparable.h \
-  ../inc/message.h ../inc/utility.h ../inc/tnode.h subtree.h \
-  ../inc/comparable.h class_id.h ../inc/complex_t.h option.h
+  globals.h complex_t.h unixstd.h stddefs.h hasher.h comparable.h \
+  object.h classdef.h list.h hashcach.h message.h ../inc/tnode.h \
+  ../inc/comparable.h ../inc/classdef.h subtree.h class_id.h option.h

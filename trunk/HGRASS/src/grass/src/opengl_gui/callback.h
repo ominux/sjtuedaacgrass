@@ -14,7 +14,7 @@
 // #include <windows.h>
 #endif // _WIN32
 #include <cstdlib> 
-//#include <GL/glut.h>
+#include <GL/glut.h>
 
 namespace Callback
 {

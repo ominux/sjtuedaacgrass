@@ -35,10 +35,12 @@ ToGraph::ToGraph()
 {
 	printf("ToGraph(): this = %p\n", this);
 	E = 0;
+	M = 0;
 	N = 0;
 	Nsrc = Nout = 0;
 	extra_nn = 0;
 	edge_list = cur_edge = NULL;
+	mos_list = cur_mos = NULL;
 	src_edge  = out_edge = NULL;
 	node_list = node_tail = NULL;
 }
@@ -53,6 +55,14 @@ ToGraph::~ToGraph()
 		edge_list = edge_list->next;
 		delete cur_edge;
 	}
+
+	// Release the list of mosfets created
+	/*while (mos_list)
+	{
+		cur_mos = mos_list;
+		mos_list = mos_list->next;
+		delete cur_mos;
+	}*/
 	// Release the list of nodes created.
 	while (node_list)
 	{
@@ -88,6 +98,7 @@ ToGraph::readNetlist(const char *filename)
 		exit(1);
 	}
 
+	//calMosfetModelParameters();
 	// IMPORTANT!
 	// Must renumber the node_list. It also counts the # of nodes.
 	renumber_nodes();
@@ -171,7 +182,7 @@ ToGraph::parseRLC(char *name, char *n1, char *n2,
 	// Check whether the branch is a duplicate.
 	if ( query_edge(name) )
 	{
-		cerr << "\nBranch [" << name << "] is a duplicate, skipped.";
+		cout << "\nBranch [" << name << "] is a duplicate, skipped.";
 		return;
 	}
 
@@ -228,6 +239,16 @@ ToGraph::parseRLC(char *name, char *n1, char *n2,
 		break;
 	}
 
+	char* tmpName = strdup(edge->name);
+	char* tmp = NULL;
+	while(tmpName)
+	  tmp = strsep(&tmpName,"_");
+	if(tmp && strcmp(tmp,edge->name))
+	{
+		Mosfet* pMos = query_mosfet(tmp);
+		if(pMos)	edge->pMosfet = pMos; 
+        }
+	free(tmpName);
 	add_edge( edge );
 } // parseRLC()
 
@@ -254,7 +275,7 @@ ToGraph::parseSRC(char *name, char *n1, char *n2,
 	// Check whether the branch is a duplicate.
 	if ( query_edge(name) )
 	{
-		cerr << "\nBranch [" << name << "] already parsed, hence skipped.";
+		cout << "\nBranch [" << name << "] already parsed, hence skipped.";
 		return;
 	}
 
@@ -395,7 +416,7 @@ ToGraph::parseOUT(char *name, char *n1, char *n2, char *br_name)
 	// Check whether the name is alreay used.
 	if ( query_edge(out_name) )
 	{
-		cerr << "\nBranch [" << name << "] already parsed -- skipped.";
+		cout << "\nBranch [" << name << "] already parsed -- skipped.";
 		return;
 	}
 	if (Nout == 1)
@@ -523,7 +544,7 @@ ToGraph::parseVCXS(char *name, char *n1, char *n2, char *nc1, char *nc2,
 	// Check whether the branch is a duplicate.
 	if ( query_edge(name) )
 	{
-		cerr << "\nBranch [" << name << "] already parsed -- skipped.";
+		cout << "\nBranch [" << name << "] already parsed -- skipped.";
 		return;
 	}
 
@@ -618,6 +639,17 @@ ToGraph::parseVCXS(char *name, char *n1, char *n2, char *nc1, char *nc2,
 	sprintf(vc_name, "V%s", name);
 	edge1->pname = CopyStr(vc_name); // name of the controlling edge
 
+	char* tmpName = strdup(edge1->name);
+	char* tmp = NULL;
+	while(tmpName)
+	  tmp = strsep(&tmpName,"_");
+	if(tmp && strcmp(tmp,edge1->name))
+	{
+		Mosfet* pMos = query_mosfet(tmp);
+		if(pMos)	edge1->pMosfet = pMos; 
+        }
+	free(tmpName);
+
 	add_edge( edge1 );
 
 	Edge_g *edge2 = new Edge_g;	// Allocate another edge for VC.
@@ -664,7 +696,7 @@ ToGraph::parseCCXS(char *name, char *n1, char *n2, char *Vname,
 	// Check whether the branch is a duplicate.
 	if ( query_edge(name) )
 	{
-		cerr << "\nBranch [" << name << "] already parsed -- skipped.";
+		cout << "\nBranch [" << name << "] already parsed -- skipped.";
 		return;
 	}
 
@@ -713,6 +745,17 @@ ToGraph::parseCCXS(char *name, char *n1, char *n2, char *Vname,
 		break;
 	}
 
+	char* tmpName = strdup(edge1->name);
+	char* tmp = NULL;
+	while(tmpName)
+	  tmp = strsep(&tmpName,"_");
+	if(tmp && strcmp(tmp,edge1->name))
+	{
+		Mosfet* pMos = query_mosfet(tmp);
+		if(pMos)	edge1->pMosfet = pMos; 
+        }
+	free(tmpName);
+
 	add_edge( edge1 );
 
 	// Now query whether the CC (Vname) edge is already parsed.
@@ -730,6 +773,55 @@ ToGraph::parseCCXS(char *name, char *n1, char *n2, char *Vname,
 	return;
 } // parseCCXS()
 
+void
+ToGraph::parseMOSFET(char *name, char *ng, char *nd, char *ns, char *nb,
+		                char *model, char *w, char *l)
+{
+	//printf("\nM%s ng=%s, nd=%s, ns=%s, nb=%s, model =%s, w=%s, l=%s",name,ng,nd,ns,nb,model,w,l);
+	int	nn[4];
+	Node_g	*node[4];
+	nn[0] = atoi(ng);	nn[1] = atoi(nd);
+	nn[2] = atoi(ns);	nn[3] = atoi(nb);
+	
+	for (int i = 0; i < 4; i++)
+	{
+		node[i] = query_node(nn[i]);
+		if ( !node[i] )
+		{
+			node[i] = new Node_g;
+			node[i]->num = nn[i];
+			node[i]->next = NULL;
+			add_node(node[i]);
+		}
+	}
+	
+	Mosfet* pMosfet = new Mosfet();
+	pMosfet->name = CopyStr(name);
+	pMosfet->nodeg = node[0];
+	pMosfet->noded = node[1];
+	pMosfet->nodes = node[2];
+	pMosfet->nodeb = node[3];
+	pMosfet->w = TransValue(w);
+	pMosfet->l = TransValue(l);
+	pMosfet->value = pMosfet->w/pMosfet->l;
+	bool isNMOS = true;
+	if(!strcmp(model,"nmos"))
+	  pMosfet->type = NMOS_DEF;
+	else if(!strcmp(model,"nch3"))
+	  pMosfet->type = NMOS_L3;
+	else if(!strcmp(model,"pmos"))
+	  pMosfet->type = PMOS_DEF;
+	else if(!strcmp(model,"pch3"))
+	  pMosfet->type = PMOS_L3;
+	else
+	  pMosfet->type = MODEL_TYPE_UNKNOWN;
+	// Ma Diming ToDo:
+	// Create Model According to the different ModelType
+	pMosfet->pModel = new MosfetModelBsim3V3(pMosfet->type);
+	// End of ToDo Ma Diming
+	pMosfet->next = NULL;
+	add_mosfet(pMosfet);
+}
 
 //-------- the following are private methods --------------------------
 
@@ -886,3 +978,32 @@ ToGraph::add_edge_at_head(Edge_g *edge)
 	++E;
 }
 
+void
+ToGraph::add_mosfet(Mosfet* mosfet)
+{
+	//cout << "\nIn add_mosfet() ";
+	// Insert to mos_list
+	if ( !mos_list )
+	        mos_list = cur_mos = mosfet;
+	else
+	        cur_mos->next = mosfet,  cur_mos = cur_mos->next;
+	 ++M;
+}
+
+Mosfet *
+ToGraph::query_mosfet(char* name)
+{
+	//cout << "\nIn query_mosfet() ";
+	Mosfet* mList = mos_list;
+	for (; mList; mList = mList->next)
+		if (!strcmp((mList->name)+1,name))	return mList;
+	return NULL;
+}
+
+void
+ToGraph::calMosfetModelParameters()
+{
+	Mosfet* mList = mos_list;
+	for (; mList; mList = mList->next)
+		mList->calBasicModelParameters(mList);
+}

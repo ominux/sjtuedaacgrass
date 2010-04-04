@@ -14,15 +14,19 @@ class Analyser
 {
 public:
 	Analyser(Analysis *ptr_analysis,
-					 std::map<std::string, double *> &name_pvalue_map);
+					 std::map<std::string, double *> &name_pvalue_map,
+					 std::map<std::string, Mosfet *> &name_pmosfet_map);
 	~Analyser();
 	void evaluate_nf_coeff();
 	complex_double transfer_function(const double ) const;
 	double *get_value_pointer(const std::string &) const;
+	Mosfet *get_mosfet_pointer(const std::string &) const;
+	int get_mosfet_flag(const std::string &) const;
 	void get_name_list(std::vector<std::string> &) const;
 private:
 	Analysis *ptr_analysis_;
 	std::map<std::string, double *> name_ptrvalue_map_;
+	std::map<std::string, Mosfet *> name_ptrmosfet_map_;
 	static const double PI_;
 };
 
@@ -44,6 +48,31 @@ inline double *Analyser::get_value_pointer(const std::string &par_name) const
 	else
 		std::cerr << "Cannot find parameter: " << par_name << std::endl;
 	return 0;
+}
+
+inline Mosfet *Analyser::get_mosfet_pointer(const std::string &par_name) const
+{
+	std::map<std::string, Mosfet *>::const_iterator it =
+                  name_ptrmosfet_map_.find(par_name);
+        if (it != name_ptrmosfet_map_.end())
+                  return it->second;
+        else
+                  std::cerr << "Cannot find parameter: " << par_name << std::endl;
+        return 0;
+}
+
+inline int Analyser::get_mosfet_flag(const std::string &par_name) const
+{
+	char key = par_name[0];
+	if(key == '(')
+	  return 0;
+	else if(key == 'W')
+	  return 1;
+	else if(key == 'L')
+	  return 2;
+	else
+	  return -1;
+	return -1;
 }
 
 inline void Analyser::get_name_list(

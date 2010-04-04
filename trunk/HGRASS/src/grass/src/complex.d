@@ -1,1 +1,1 @@
-complex.o complex.d: complex.cpp ../inc/complex_t.h ../inc/message.h
+complex.o complex.d: complex.cpp complex_t.h message.h

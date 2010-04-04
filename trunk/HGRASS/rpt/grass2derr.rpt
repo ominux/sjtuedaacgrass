@@ -1,3 +1,2 @@
 
-Branch [VP] already parsed -- skipped.
-(grass2D:6942): libglade-WARNING **: could not look up stock id 'gtk-about'
+(grass2D:7703): libglade-WARNING **: could not look up stock id 'gtk-about'

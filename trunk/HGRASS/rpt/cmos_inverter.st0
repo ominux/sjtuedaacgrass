@@ -4,7 +4,7 @@
  lic:
  lic: FLEXlm: v8.5b
  lic: USER:   madiming             HOSTNAME: eda-server.localdomain
- lic: HOSTID: 002219a9250f         PID:      6930
+ lic: HOSTID: 002219a9250f         PID:      27805
  lic: Using FLEXlm license file:
  lic: /usr/local/flexlm/licenses/license.dat
  lic: Checkout 1 hspice
@@ -26,8 +26,8 @@
  sweep: dc dc0    begin, #sweeps=  51 cpu clock=  0.00E+00
  sweep: dc dc0    end,  cpu clock=  0.00E+00 memory=       159 kb
  dcop: begin dcop,  cpu clock=  0.00E+00
- dcop: end dcop,  cpu clock=  0.00E+00 memory=       159 kb  tot_iter=       8
- sweep: tran tran0    begin, stop_t=  3.00E-07 #sweeps= 301 cpu clock=  0.00E+00
+ dcop: end dcop,  cpu clock=  1.00E-02 memory=       159 kb  tot_iter=       8
+ sweep: tran tran0    begin, stop_t=  3.00E-07 #sweeps= 301 cpu clock=  1.00E-02
  tran: time= 3.1953E-08 tot_iter=      70 conv_iter=      28 cpu clock= 1.00E-02
  tran: time= 6.1094E-08 tot_iter=     157 conv_iter=      59 cpu clock= 1.00E-02
  tran: time= 9.1953E-08 tot_iter=     221 conv_iter=      84 cpu clock= 1.00E-02

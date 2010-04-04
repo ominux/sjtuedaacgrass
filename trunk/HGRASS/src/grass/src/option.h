@@ -69,4 +69,5 @@
 
 // Do NOT use parallel computing because of unknown bugs!!! 2009-06-24
 // #define PARALLEL_COMPUTING
+#define MADIMING
 #endif

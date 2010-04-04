@@ -1,33 +1,50 @@
-ToGraph(): this = 0x567010
+ToGraph(): this = 0x56e010
 
- Input file name: rpt/cmos_inverter_ext.sp
-Output file name: rpt/cmos_inverter_ext.sp.gph
+ Input file name: rpt/self_bias_inverter_ext.sp
+Output file name: rpt/self_bias_inverter_ext.sp.gph
 
 ->Start parsing the netlist ... 
 
+Branch [VP] already parsed -- skipped.
 ->Finished parsing the netlist.
-total symbol number : 19
-VIN 1 0
-RB 1 2
+total symbol number : 35
+VIN 1 2
+CL 3 0
 RD_1 3 4
 RS_1 0 5
 CAPBD_1 4 0
 GM_1 4 5
 RDS_1 4 5
-CGS_1 2 5
-CGD_1 2 4
+CGS_1 1 5
+CGD_1 1 4
 RD_2 3 6
 RS_2 0 7
 CAPBD_2 6 0
 GM_2 6 7
 RDS_2 6 7
-CGS_2 2 7
-CGD_2 2 6
-R2 1 2
+CGS_2 1 7
+CGD_2 1 6
+RD_3 8 9
+RS_3 0 10
+CAPBD_3 9 0
+GM_3 9 10
+RDS_3 9 10
+CGS_3 8 10
+RD_4 8 11
+RS_4 0 12
+CAPBD_4 11 0
+GM_4 11 12
+RDS_4 11 12
+CGS_4 8 12
+E1 2 0
 CAPBS_1 5 0
 CAPBS_2 7 0
+CGD_3 8 9
+CAPBS_3 10 0
+CGD_4 8 11
+CAPBS_4 12 0
 mytpdd1 done.
-~ToGraph(): this = 0x567010
+~ToGraph(): this = 0x56e010
 -> Start Spanning the Tree Pair Decision Diagram ... ... ... ... ... ...
 
 spanning times: 0
@@ -44,22 +61,3 @@ Garbage collecting ... ...
 --> Begin GRDD S-expanding ... ...
 
 <-- End GRDD  S-expanding ... ...
-Custom quit + gtk_main_quit
-minus : 0
-plus  : 0
-===============================================
-Number of tpddnodes:233
-Term Numbers  : 752
-===============================================
-Term Numbers  : 7.520000e+02
-spanning times: 466
-Number of Subtree nodes : 296
-SubTree Sharing Times: 326
-Tpdd Nodes Sharing Times: 78
-Number of reduced TPDD nodes: 52
-Number of tpddnodes after Reduce:183
-Number of scoefficient nodes: 759
-Number of sexpandTpdd nodes : 181
-Start to destruct the TPDD object:
-Complete to destruct the TPDD object.
-GRASS Exit normally.
