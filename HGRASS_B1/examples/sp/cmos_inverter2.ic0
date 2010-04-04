@@ -1,0 +1,17 @@
+* "simulator" "HSPICE" 
+* "version" "A-2008.03 64-BIT"
+* "format" "HSP"
+* "rundate" "00:02:05 03/12/2010 "
+* "netlist" "cmos_inverter2.sp "
+* "runtitle" "simple nmos inverter"
+* time =    0.            
+* temperature =   25.0000        
+*** BEGIN: Saved Operating Point ***                     
+.option 
++ gmindc=   1.0000p       
+.nodeset
++ base =   0.            
++ in =   0.            
++ out =   5.0000        
++ vdd =   5.0000        
+***   END: Saved Operating Point ***                     
