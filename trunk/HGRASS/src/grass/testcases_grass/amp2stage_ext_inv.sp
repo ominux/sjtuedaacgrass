@@ -1,0 +1,103 @@
+*Basic 2 Stage CMOS AMP Circuit
+VIN 0 201 ac 1
+ 
+
+ 
+ 
+
+ 
+*Resources Statement
+ 
+ 
+ 
+ 
+*R1 outp inn 0
+ 
+*Description of the sub-circuit
+ 
+*main circuit
+ 
+ 
+ 
+*I3 0 outn 100u
+ 
+
+ 
+M1 20002 0 20004 20004 pch3 w=7u l=1.8u vgs=-1.0744 vds=-663.0246m vth=-702.6073m vbs=0 vdsat=-304.2733m id=-10.0000u state=Saturati
+rd_1 20002 20003 205.7143m
+rs_1 20004 20005 205.7143m
+capbd_1 20003 20004 6.2812f
+capbs_1 20005 20004 6.2812f
+gm_1 20003 20005 0 20004 48.6854u
+rds_1 20003 20005 5612695.91817
+cgs_1 0 20005 44.7996f
+cgd_1 0 20003 1.9775f
+ 
+M2 20006 201 20004 20004 pch3 w=7u l=1.8u vgs=-1.0744 vds=-663.0246m vth=-702.6073m vbs=0 vdsat=-304.2733m id=-10.0000u state=Saturati
+rd_2 20006 20007 205.7143m
+rs_2 20004 20008 205.7143m
+capbd_2 20007 20004 6.2812f
+capbs_2 20008 20004 6.2812f
+gm_2 20007 20008 201 20004 48.6854u
+rds_2 20007 20008 5612695.91817
+cgs_2 201 20008 44.7996f
+cgd_2 201 20007 1.9775f
+ 
+M3 20002 20006 0 0 nch3 w=3u l=1.8u vgs=1.0114 vds=1.0114 vth=773.5036m vbs=0 vdsat=225.5047m id=10.0000u state=Saturati
+rd_3 20002 20010 453.3333m
+rs_3 0 20011 453.3333m
+capbd_3 20010 0 2.9303f
+capbs_3 20011 0 2.9303f
+gm_3 20010 20011 20006 0 73.4376u
+rds_3 20010 20011 9520481.88871
+cgs_3 20006 20011 16.9509f
+cgd_3 20006 20010 9.449651e-16
+ 
+M4 20006 20006 0 0 nch3 w=3u l=1.8u vgs=1.0114 vds=1.0114 vth=773.5036m vbs=0 vdsat=225.5047m id=10.0000u state=Saturati
+rd_4 20006 20012 453.3333m
+rs_4 0 20013 453.3333m
+capbd_4 20012 0 2.9303f
+capbs_4 20013 0 2.9303f
+gm_4 20012 20013 20006 0 73.4376u
+rds_4 20012 20013 9520481.88871
+cgs_4 20006 20013 16.9509f
+cgd_4 20006 20012 9.449651e-16
+ 
+M5 20014 20002 0 0 nch3 w=30u l=1.8u vgs=1.0114 vds=828.5309m vth=776.1733m vbs=0 vdsat=223.2324m id=100.0000u state=Saturati
+rd_5 20014 20015 45.3333m
+rs_5 0 20016 45.3333m
+capbd_5 20015 0 27.4981f
+capbs_5 20016 0 27.4981f
+gm_5 20015 20016 20002 0 740.2028u
+rds_5 20015 20016 779423.226812
+cgs_5 20002 20016 170.7482f
+cgd_5 20002 20015 9.5609f
+ 
+*M6 outn nod3 0 0 nch3 w=30u l=1.8u
+ 
+
+ 
+Cp 20002 20014 2p
+ 
+*Cn nod3 outn 2p
+ 
+
+ 
+Cl 20014 0 10p
+ 
+*Vb nodb 0 0.9
+ 
+.op
+ 
+.options list node post=2 probe unwrap
+ 
+.ac dec 1000 1 10x
+ 
+*BW and PM
+ 
+.print ac VDB(20014) VP(20014)
+ 
+*.pz V(20014) Vin
+ 
+.end
+ 

@@ -1,48 +1,56 @@
 ToGraph(): this = 0x56e010
 
- Input file name: rpt/self_bias_inverter_ext.sp
-Output file name: rpt/self_bias_inverter_ext.sp.gph
+ Input file name: rpt/amp2stage_ext.sp
+Output file name: rpt/amp2stage_ext.sp.gph
 
 ->Start parsing the netlist ... 
 
 Branch [VP] already parsed -- skipped.
 ->Finished parsing the netlist.
-total symbol number : 35
-VIN 1 2
-CL 3 0
-RD_1 3 4
-RS_1 0 5
-CAPBD_1 4 0
-GM_1 4 5
-RDS_1 4 5
+total symbol number : 43
+VIN 1 0
+RD_1 2 3
+RS_1 4 5
+CAPBD_1 3 4
+GM_1 3 5
+RDS_1 3 5
 CGS_1 1 5
-CGD_1 1 4
-RD_2 3 6
-RS_2 0 7
-CAPBD_2 6 0
-GM_2 6 7
-RDS_2 6 7
-CGS_2 1 7
-CGD_2 1 6
-RD_3 8 9
-RS_3 0 10
-CAPBD_3 9 0
-GM_3 9 10
-RDS_3 9 10
-CGS_3 8 10
-RD_4 8 11
-RS_4 0 12
-CAPBD_4 11 0
-GM_4 11 12
-RDS_4 11 12
-CGS_4 8 12
-E1 2 0
-CAPBS_1 5 0
-CAPBS_2 7 0
-CGD_3 8 9
-CAPBS_3 10 0
-CGD_4 8 11
-CAPBS_4 12 0
+CGD_1 1 3
+RD_2 6 7
+RS_2 4 8
+CAPBD_2 7 4
+GM_2 7 8
+RDS_2 7 8
+CGS_2 9 8
+CGD_2 9 7
+RD_3 2 10
+RS_3 0 11
+CAPBD_3 10 0
+GM_3 10 11
+RDS_3 10 11
+CGS_3 6 11
+CGD_3 6 10
+RD_4 6 12
+RS_4 0 13
+CAPBD_4 12 0
+GM_4 12 13
+RDS_4 12 13
+CGS_4 6 13
+RD_5 14 15
+RS_5 0 16
+CAPBD_5 15 0
+GM_5 15 16
+RDS_5 15 16
+CGS_5 2 16
+CGD_5 2 15
+CP 2 14
+CL 14 0
+CAPBS_1 5 4
+CAPBS_2 8 4
+CAPBS_3 11 0
+CGD_4 6 12
+CAPBS_4 13 0
+CAPBS_5 16 0
 mytpdd1 done.
 ~ToGraph(): this = 0x56e010
 -> Start Spanning the Tree Pair Decision Diagram ... ... ... ... ... ...
@@ -61,3 +69,22 @@ Garbage collecting ... ...
 --> Begin GRDD S-expanding ... ...
 
 <-- End GRDD  S-expanding ... ...
+Custom quit + gtk_main_quit
+minus : 0
+plus  : 0
+===============================================
+Number of tpddnodes:2094
+Term Numbers  : 1.04518e+07
+===============================================
+Term Numbers  : 1.045180e+07
+spanning times: 4188
+Number of Subtree nodes : 2173
+SubTree Sharing Times: 3493
+Tpdd Nodes Sharing Times: 739
+Number of reduced TPDD nodes: 1245
+Number of tpddnodes after Reduce:851
+Number of scoefficient nodes: 7510
+Number of sexpandTpdd nodes : 849
+Start to destruct the TPDD object:
+Complete to destruct the TPDD object.
+GRASS Exit normally.

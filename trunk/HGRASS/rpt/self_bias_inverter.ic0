@@ -1,7 +1,7 @@
 * "simulator" "HSPICE" 
 * "version" "A-2008.03 64-BIT"
 * "format" "HSP"
-* "rundate" "21:50:46 04/04/2010 "
+* "rundate" "23:30:08 04/11/2010 "
 * "netlist" "/home/madiming/EDA/AnalogCourse/HGRASS/examples/sp/self_bias_inverter.sp "
 * "runtitle" "self-bias inverter"
 * time =    0.            

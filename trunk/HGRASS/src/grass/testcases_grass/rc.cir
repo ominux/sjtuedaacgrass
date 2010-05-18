@@ -1,0 +1,11 @@
+inverter.cir -- a simple inverter
+* The ideal opamp is modeled as a VCVS with a large gain.
+
+R1 1 2 10k
+C1 2 0 10p
+
+Vin 1 0 ac 1
+.ac dec 10 1k 100k
+.print ac V(2)
+.end
+

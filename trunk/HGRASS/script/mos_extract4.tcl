@@ -133,6 +133,13 @@ proc mos_extract {LisFile} {
 					set para_name_inst [join "$para_name $inst_num" _]
 					lappend m_inst_para($inst_num) $para_name_inst [lindex $line $k]
 				}
+			} elseif {$para_name=="vgs" || $para_name=="vds" || $para_name=="vbs" || $para_name=="vth"
+				|| $para_name=="vdsat" || $para_name=="id" || $para_name=="region"} {
+				for {set k 1} {$k < $row_num} {incr k} {
+					set inst_num [lindex $m_inst_num [expr $k-1]]
+					set para_name_inst $para_name
+					lappend m_inst_para($inst_num) $para_name_inst [lindex $line $k]
+				}
 			} elseif {$para_name=="cgd"} {
 			
 				for {set k 1} {$k < $row_num} {incr k} {
@@ -314,7 +321,50 @@ proc build_cir {SPFile} {
 			for {set i 5} {$i < [llength $line]} {incr i} {
 				lappend linetemp [lindex $line $i]
 			}
-			puts $channel [join "M$inst_num $node_D $node_G $node_S $node_B $linetemp"]
+
+			for {set i 0} {$i < [llength $m_inst_para($inst_num)]} {set i [expr $i+2]} {
+				set para_name [lindex $m_inst_para($inst_num) $i]
+				set para_val [string trimright "[lindex $m_inst_para($inst_num) [expr $i+1]]" {.}]
+				if {[string first {a} $para_val 1]!=-1} {
+					set para_val [string trimright "$para_val" {a}]
+					if {![string match -nocase {region} $para_name]} {
+						set para_val [expr $para_val/1000000000000000000]
+				        }
+				}
+				#if {[string match -nocase {vgs} [lindex $m_inst_para($inst_num) $i]]} {
+				#	set VGS $para_val
+				#} elseif {[string match -nocase {vds} [lindex $m_inst_para($inst_num) $i]]} {
+				#	set VDS $para_val
+				#} elseif {[string match -nocase {region} [lindex $m_inst_para($inst_num) $i]]} {
+				#	set REGION $para_val
+				#} elseif {[string match -nocase {vth} [lindex $m_inst_para($inst_num) $i]]} {
+				#	set VTH $para_val
+				#} elseif {[string match -nocase {vbs} [lindex $m_inst_para($inst_num) $i]]} {
+				#	set VBS $para_val
+				#} elseif {[string match -nocase {vdsat} [lindex $m_inst_para($inst_num) $i]]} {
+				#	set VDSAT $para_val
+				#} elseif {[string match -nocase {id} [lindex $m_inst_para($inst_num) $i]]} {
+				#	set ID $para_val
+				#}
+			
+				if {[string match -nocase {vgs} $para_name]} {
+					set VGS $para_val
+				} elseif {[string match -nocase {vds} $para_name]} {
+					set VDS $para_val
+				} elseif {[string match -nocase {region} $para_name]} {
+					set REGION $para_val
+				} elseif {[string match -nocase {vth} $para_name]} {
+					set VTH $para_val
+				} elseif {[string match -nocase {vbs} $para_name]} {
+					set VBS $para_val
+				} elseif {[string match -nocase {vdsat} $para_name]} {
+					set VDSAT $para_val
+				} elseif {[string match -nocase {id} $para_name]} {
+					set ID $para_val
+				}
+			}
+
+			puts $channel [join "M$inst_num $node_D $node_G $node_S $node_B $linetemp vgs=$VGS vds=$VDS vth=$VTH vbs=$VBS vdsat=$VDSAT id=$ID state=$REGION"]
 			
 			for {set i 0} {$i < [llength $m_inst_para($inst_num)]} {set i [expr $i+2]} { 
 				set para_name [lindex $m_inst_para($inst_num) $i]
@@ -322,7 +372,9 @@ proc build_cir {SPFile} {
 				#puts $para_val
 				if {[string first {a} $para_val 1]!=-1} {
 					set para_val [string trimright "$para_val" {a}]
-					set para_val [expr $para_val/1000000000000000000]
+					if {![string match -nocase {region} $para_name]} {
+						set para_val [expr $para_val/1000000000000000000]
+					}
 				}
 		
 				if {[string match -nocase {rd_*} [lindex $m_inst_para($inst_num) $i]]} {
@@ -402,8 +454,16 @@ proc build_cir {SPFile} {
 						lappend temp [lindex $m_inst_para($inst_num) $i] $node_G $inode_2 $para_val
 				}		
 
-				puts $channel $temp
-				unset temp
+				if {![string match -nocase {vgs} $para_name] &&
+				    ![string match -nocase {vds} $para_name] &&
+				    ![string match -nocase {vth} $para_name] &&
+                                    ![string match -nocase {vbs} $para_name] &&
+                                    ![string match -nocase {vdsat} $para_name] &&
+                                    ![string match -nocase {id} $para_name] &&
+                                    ![string match -nocase {region} $para_name]} {
+					puts $channel $temp
+					unset temp
+				}
 					
 			#break
 			}		

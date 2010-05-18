@@ -83,6 +83,7 @@ private:
 	
 		SymbNode *SymbListTemp;
 
+		Mosfet  *MosList;
 
 	/// the root node of the tree pair decision diagram.
 		tpddnode * pTpddRoot;			
@@ -276,8 +277,14 @@ public:
 
 	inline tpddnode *GetpOne() {return pOne;}
 	inline tpddnode *GetpZero() {return pZero;}
+	inline scoeffNode *GetpSCoeffOne() {return pSCoeffOne;}
+	inline scoeffNode *GetpSCoeffZero() {return pSCoeffZero;}
 	void ModifyStructure(int tag, char * name);
 	void ModifyStructureR(tpddnode *P, int tag, char * name);
+
+
+	inline Mosfet* GetMosfetList()	{return MosList;}
+	inline void SetMosfetList(Mosfet* pMosList)	{MosList = pMosList;}
 //	inline double GetImaginary(int index) {return Slist[index]->imag;}
 	/**
 		The function to create the edge list.

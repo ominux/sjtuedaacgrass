@@ -70,6 +70,7 @@ public:
 	inline int		getN()  		{return N;}
 	inline int		getM()  		{return M;}
 	inline Edge_g 	*getEdgeList()	{ return edge_list; }
+	inline Mosfet	*getMosfetList() { return mos_list;}
 	
 	void parseRLC(char *name, char *n1, char *n2, 
 					char *value, char *var_name);
@@ -85,9 +86,8 @@ public:
 	// Parse a CCCS/CCVS branch.
 	void parseCCXS(char *name, char *n1, char *n2, char *Vname,
 					char *value, char *var_name);
-	void parseMOSFET(char *name, char *ng, char *nd, char *ns, char *nb,
-				char *model, char *w, char *l);
-
+	void parseMOSFET(char *name, char *nd, char *ng, char *ns, char *nb,
+					char *model, char *w, char *l);
 private:
 	/* Methods for accessing the Node_g List */
 	Node_g *query_node(int node_num);
