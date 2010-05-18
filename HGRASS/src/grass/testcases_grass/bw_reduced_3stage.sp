@@ -1,13 +1,8 @@
 * Bandwidth and phase for the three-stage opamp *title
- 
-VIN 11 0 ac 1
- 
- 
-* Opamp circuit ------------------------------------------------------------------
 
- 
+VIN 11 0 ac 1 
+* Opamp circuit ------------------------------------------------------------------
 * the first differential input stage
- 
 * M1 3 10 2 2 nch3 L=0.5u W=8u
 rd_1 3 100 170.0000m
 rs_1 2 101 170.0000m

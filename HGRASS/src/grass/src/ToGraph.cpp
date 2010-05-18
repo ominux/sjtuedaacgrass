@@ -1,4 +1,4 @@
-/* ToGraph.cpp
+/** ToGraph.cpp
  * Parsing a standard netlist to a graph file.
  * G.Shi, 03-25-04, 03-31-04
  *
@@ -774,15 +774,14 @@ ToGraph::parseCCXS(char *name, char *n1, char *n2, char *Vname,
 } // parseCCXS()
 
 void
-ToGraph::parseMOSFET(char *name, char *ng, char *nd, char *ns, char *nb,
+ToGraph::parseMOSFET(char *name, char *nd, char *ng, char *ns, char *nb,
 		                char *model, char *w, char *l)
 {
-	//printf("\nM%s ng=%s, nd=%s, ns=%s, nb=%s, model =%s, w=%s, l=%s",name,ng,nd,ns,nb,model,w,l);
-	int	nn[4];
+	printf("\nM%s nd=%s, ng=%s, ns=%s, nb=%s, model =%s, w=%s, l=%s",name,nd,ng,ns,nb,model,w,l);
+	/*int	nn[4];
 	Node_g	*node[4];
-	nn[0] = atoi(ng);	nn[1] = atoi(nd);
+	nn[0] = atoi(nd);	nn[1] = atoi(ng);
 	nn[2] = atoi(ns);	nn[3] = atoi(nb);
-	
 	for (int i = 0; i < 4; i++)
 	{
 		node[i] = query_node(nn[i]);
@@ -793,14 +792,14 @@ ToGraph::parseMOSFET(char *name, char *ng, char *nd, char *ns, char *nb,
 			node[i]->next = NULL;
 			add_node(node[i]);
 		}
-	}
+	}*/
 	
 	Mosfet* pMosfet = new Mosfet();
 	pMosfet->name = CopyStr(name);
-	pMosfet->nodeg = node[0];
-	pMosfet->noded = node[1];
-	pMosfet->nodes = node[2];
-	pMosfet->nodeb = node[3];
+	pMosfet->noded = NULL;//node[0];
+	pMosfet->nodeg = NULL;//node[1];
+	pMosfet->nodes = NULL;//node[2];
+	pMosfet->nodeb = NULL;//node[3];
 	pMosfet->w = TransValue(w);
 	pMosfet->l = TransValue(l);
 	pMosfet->value = pMosfet->w/pMosfet->l;

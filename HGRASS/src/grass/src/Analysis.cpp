@@ -129,42 +129,40 @@ E_value Analysis::Evaluate_complex_diff_factor(tpddnode *pRoot, double symbol_va
 	double imag = 0;
 	double real = 0;
 	double trans_value;
-	//cout << "&&&&&&&&&&&&&" << endl;
-	//trans_value = TPE->Search_value(tag, symb_name);
 	
+	complex_t oValue = complex_t(TPE->GetValue(tag),TPE->GetImaginary(tag));
 	trans_value = symbol_value;
-//cout << "************" << endl;
-//	cout << "tran_value is : " << trans_value << endl;
 	TPE->SetSymbValue(freq);
 	if(symb_name[0] == 'R')
 	{
 		real = (trans_value == 0? DBL_MAX: (-1)/(trans_value*trans_value));
-//		cout << "real is : " << real << endl;
 		TPE->SetValue(list_index, real);
 		TPE->SetImaginary(list_index, 0.0);
 	}
 	else if(symb_name[0] == 'L')
 	{
-	//	TPE->SetValue(list_index, 1);
-		imag = (trans_value == 0? DBL_MAX : 1/(2*PI*freq*trans_value)); 
-		TPE->SetValue(list_index,1/(imag*imag));
-		TPE->SetImaginary(list_index,0.0);
+		imag = (trans_value == 0? DBL_MAX : 1/(2*PI*freq*trans_value*trans_value)); 
+		TPE->SetValue(list_index,0.0);
+		//ToDo: Invest whether is 1/imag or imag
+		TPE->SetImaginary(list_index,1/(imag));
+	}
+	else if(symb_name[0] == 'C')
+	{
+		TPE->SetValue(list_index,0.0);
+		TPE->SetImaginary(list_index,2*PI*freq);
 	}
 	else
 	{
-//		cout << "not R or L" << endl;
         	TPE->SetValue(list_index, 1);
        		TPE->SetImaginary(list_index, 0.0);
 	}
 
         if(num->GetSymbIndex() > list_index)
         {
-  //              cout << "the numerator of differential is 0." << endl;
                 num = TPE->GetpZero();
         }
         if(den->GetSymbIndex() > list_index)
         {
-    //            cout << "the differential  of D(s) is 0." << endl;
                 den = TPE->GetpZero();
         }
 
@@ -175,9 +173,9 @@ E_value Analysis::Evaluate_complex_diff_factor(tpddnode *pRoot, double symbol_va
         diff_den = EvaluateR_diff_factor(den, freq,1, list_index, symb_name);
         E_value diff;
         diff.num = diff_num;
-//      cout << "diff_num is : " << diff_num << endl;
 	diff.den = diff_den;
-//      cout << "diff_den is : " << diff_den << endl;
+	TPE->SetValue(list_index, oValue.real());
+	TPE->SetImaginary(list_index, oValue.imag());
         return diff;
 }
 	
@@ -224,23 +222,26 @@ E_value Analysis::Evaluate_complex_diff(tpddnode *pRoot, double symbol_value, ch
 complex_t Analysis::EvaluateR_diff_factor(tpddnode *P, double freq, bool visited, int sentag, char *name)
 {
 	//cout << "index is : " << P->GetSymbIndex() << endl;
+	int PID = P->GetSymbIndex();
 	
-	if(P->GetSymbIndex() == -2)
+	//if(P->GetSymbIndex() == -2)
+	if(PID == -2)
 
 	{
-                if(!P->Marked())
-                {
-                        P->Mark();
-                }
+                //if(!P->Marked())
+                //{
+                //        P->Mark();
+                //}
                 return complex_t(0.0);
         }
 
-        else if(P->GetSymbIndex() == -1)
+        //else if(P->GetSymbIndex() == -1)
+        else if(PID == -1)
         {
-                if(!P->Marked())
-                {
-                        P->Mark();
-                }
+                //if(!P->Marked())
+                //{
+                //        P->Mark();
+                //}
                 return complex_t(1.0);
         }
 	if(P->Marked())
@@ -251,33 +252,40 @@ complex_t Analysis::EvaluateR_diff_factor(tpddnode *P, double freq, bool visited
                 P->Mark();
 
         complex_t V,V1,V0;
-        double value;
 
-         value = TPE->GetValue(P->GetSymbIndex());
-	
-        double imag;
-	//cout << "sentag is : " << sentag << endl;
-	if(sentag == P->GetSymbIndex()) 
+	//ToDo: Simplize the call
+        //double value = TPE->GetValue(P->GetSymbIndex());
+        //double imag = TPE->GetImaginary(P->GetSymbIndex());
+        double value = TPE->GetValue(PID);
+        double imag = TPE->GetImaginary(PID);
+	//if(sentag == P->GetSymbIndex()) 
+	if(sentag == PID) 
 	{
-	//	cout << "value is******** : " << value << endl;
-//		if(TPE->GetSymbName)	
-		if(name[0] == 'R')
+		/*if(name[0] == 'R')
 		{
-			V = complex_t(value);
+			V = complex_t(value,imag);
 		}
 		else if(name[0] == 'L')
 		{
-			V = complex_t(value);
+			V = complex_t(value,imag);
 		}
+		else if(name[0] == 'C')
+		{
+			V = complex_t(value,imag);
+		}*/
+		char t = name[0];
+		if(t == 'R' || t == 'L' || t == 'C')
+			V = complex_t(value,imag);
 		else
 		{
 			V = complex_t(1);
 		}
-		
 	}
         else
         {
-                switch (TPE->GetSymbName(P->GetSymbIndex())[0])
+		//ToDo: Simplize the call
+                //switch (TPE->GetSymbName(P->GetSymbIndex())[0])
+                switch (TPE->GetSymbName(PID)[0])
                 {
                         case 'R':
                                 if(value == 0)
@@ -295,7 +303,6 @@ complex_t Analysis::EvaluateR_diff_factor(tpddnode *P, double freq, bool visited
                                 V = complex_t(0,2*PI*freq*value);
                                 break;
                         case '^':
-                                imag = TPE->GetImaginary(P->GetSymbIndex());
                                 V = complex_t(value, imag);
                                 break;
                         default:
@@ -303,30 +310,35 @@ complex_t Analysis::EvaluateR_diff_factor(tpddnode *P, double freq, bool visited
                                 break;
                 }
         }
-	tpddnode *pNode;
 
-        pNode = P->GetPShort();
-
-        if((P->GetSymbIndex() < sentag) && (pNode->GetSymbIndex() > sentag))
+	tpddnode *pZero = TPE->GetpZero();
+	tpddnode *pNode = P->GetPShort();
+	
+        //if((P->GetSymbIndex() < sentag) && (pNode->GetSymbIndex() > sentag))
+        if((PID < sentag) && (pNode->GetSymbIndex() > sentag))
         {
-                P->SetPShort(TPE->GetpZero());
-                pNode = P->GetPShort();
-
+                //P->SetPShort(TPE->GetpZero());
+                //pNode = P->GetPShort();
+		pNode = pZero;
         }
-        else if((P->GetSymbIndex() < sentag) && (pNode == TPE->GetpOne()))
+        //else if((P->GetSymbIndex() < sentag) && (pNode == TPE->GetpOne()))
+        else if((PID < sentag) && (pNode == TPE->GetpOne()))
         {
-                P->SetPShort(TPE->GetpZero());
-                pNode = P->GetPShort();
+                //P->SetPShort(TPE->GetpZero());
+                //pNode = P->GetPShort();
+		pNode = pZero;
         }
 
         V1 = EvaluateR_diff_factor(pNode, freq, 1, sentag,name);
 
         pNode = P->GetPOpen();
 
-        if(P->GetSymbIndex() == sentag)
+        //if(P->GetSymbIndex() == sentag)
+        if(PID == sentag)
         {
-                P->SetPOpen(TPE->GetpZero());
-                pNode = P->GetPOpen();
+                //P->SetPOpen(TPE->GetpZero());
+                //pNode = P->GetPOpen();
+		pNode = pZero;
         }
 
         V0 = EvaluateR_diff_factor(pNode, freq, 1, sentag,name);
@@ -488,23 +500,26 @@ complex_t Analysis::Evaluate(tpddnode *pRoot, double freq)
 	
 complex_t	Analysis::EvaluateR(tpddnode *P, double freq, bool visited)
 {
-	if ( P->GetSymbIndex() == -2 )		// 'zero' node
+	int PID = P->GetSymbIndex();
+	//if ( P->GetSymbIndex() == -2 )		// 'zero' node
+	if ( PID == -2 )		// 'zero' node
 	{
 	/*	if (P->GetVisitFlag() != visited)
 			P->SetVisitFlag(visited);
 		return complex_t(0.0);*/
-		if(!P->Marked())
-			P->Mark();
+		//if(!P->Marked())
+		//	P->Mark();
 	//	P->SetValue(complex_t(0.0));
 		return complex_t(0.0);
 	}
-	else if (P->GetSymbIndex() == -1)	// 'one' node
+	//else if (P->GetSymbIndex() == -1)	// 'one' node
+	else if (PID == -1)	// 'one' node
 	{
 	/*	if (P->GetVisitFlag() != visited)
 			P->SetVisitFlag(visited);
 		return complex_t(1.0);*/
-		if(!P->Marked())
-			P->Mark();
+		//if(!P->Marked())
+		//	P->Mark();
 	//	P->SetValue(complex_t(1.0));
 		return complex_t(1.0);
 	}
@@ -529,7 +544,8 @@ complex_t	Analysis::EvaluateR(tpddnode *P, double freq, bool visited)
 	double	value = TPE->GetValue(P->GetSymbIndex());
 	double	imag;
 
-	switch ( TPE->GetSymbName(P->GetSymbIndex())[0] )
+	//switch ( TPE->GetSymbName(P->GetSymbIndex())[0] )
+	switch ( TPE->GetSymbName(PID)[0] )
 	{
 	case 'R':
 		if (value == 0)
@@ -807,4 +823,81 @@ void Analysis::UnMarkSExpTree(sexpTpddNode *P)
 
 	UnMarkSExpTree(P->pShort);
 	UnMarkSExpTree(P->pOpen);
+}
+
+void Analysis::UnMarkSCoefNodeTree(scoeffNode* P)
+{
+	if(!P->Marked() || (P->pNode && (P->pNode->symbIndex == -1 || P->pNode->symbIndex == -2)))
+		return;
+	else
+		P->UnMark();
+	UnMarkSCoefNodeTree(P->pShort);
+	UnMarkSCoefNodeTree(P->pOpen);
+}
+
+complex_t Analysis::EvaluateSCoeffSensitivity(scoeffNode* P, char* symbName, int sensID)
+{
+	UnMarkSCoefNodeTree(P);
+	return EvaluateSCoeffSensitivityR(P,sensID);
+}
+
+complex_t Analysis::EvaluateSCoeffSensitivityR(scoeffNode* P, int sensID)
+{
+	sexpTpddNode* mpNode = P->pNode;
+	int symbID = mpNode->symbIndex;
+	if(symbID == -2)
+		return complex_t(0);
+	else if(symbID == -1)
+		return complex_t(1);
+	else if(P->Marked())
+		return *P->val_ptr;
+	else
+		P->Mark();
+
+	SymbNode* pSymbN = NULL;
+	char eType = TPE->GetSlist()[symbID]->name[0];
+	if(eType == '^')
+	{
+	        eType = TPE->GetSlist()[symbID]->name[1];
+	        pSymbN = TPE->GetSlist()[symbID]->nextP;
+	}
+	else
+	        pSymbN = TPE->GetSlist()[symbID];
+	double value = pSymbN->value;
+
+	complex_t       V, V1, V0, Vr;
+	if(symbID == sensID)
+	{
+		if(eType == 'R' || eType == 'L')
+			V = value == 0 ? complex_t(DBL_MAX*DBL_MAX*-1) : complex_t(-1/(value*value));
+		else
+			V = complex_t(1);
+	}
+	else
+	{
+		if(eType == 'R' || eType == 'L')
+			V = value == 0 ? complex_t(DBL_MAX) : complex_t(1/value);
+		else
+			V = complex_t(value);
+	}
+
+	scoeffNode* mpScieffOne = TPE->GetpSCoeffOne();
+	scoeffNode* mpScieffZero = TPE->GetpSCoeffZero();
+	scoeffNode* mpScoeffNode = NULL;
+
+	mpScoeffNode = P->pShort;
+	if((symbID < sensID) && (mpScoeffNode->pNode->symbIndex > sensID))
+		mpScoeffNode = mpScieffZero;
+	else if((symbID < sensID) && (mpScoeffNode == mpScieffOne))
+		mpScoeffNode = mpScieffZero;
+	V1 = EvaluateSCoeffSensitivityR(mpScoeffNode,sensID);
+
+	mpScoeffNode = P->pOpen;
+	if(symbID == sensID)
+		mpScoeffNode = mpScieffZero;
+        V0 = EvaluateSCoeffSensitivityR(mpScoeffNode,sensID);
+
+	Vr = V * V1 * mpNode->signS + V0 * mpNode->signO;
+	*P->val_ptr = Vr;
+	return Vr;
 }

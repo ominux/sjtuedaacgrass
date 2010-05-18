@@ -132,6 +132,7 @@ namespace
 double gain_trigger_phase_margin = 0.0; // dB
 double gain_trigger_band_width = 0.0; // dB
 double freq_start = 1.0e-6, freq_end = 1.0e9; // Hz
+//double freq_start = 1.0e-6, freq_end = 1.0e7; // Hz
 int num_each_tf_samples = 50;
 
 inline void string_to_upper(string &str)
@@ -522,7 +523,7 @@ sens_y(GLdouble x0, GLdouble y0, void *objptr,
 GLdouble
 sens_phase_margin(const GLdouble x, const GLdouble y, void *objptr)
 {
-#if 0
+#if 1
 	assert(ptr_parameter_group_pm_x);
 	assert(ptr_parameter_group_pm_y);
 	assert(objptr);
@@ -547,7 +548,7 @@ sens_phase_margin(const GLdouble x, const GLdouble y, void *objptr)
 GLdouble
 sens_band_width(const GLdouble x, const GLdouble y, void *objptr)
 {
-#if 0
+#if 1
 	assert(ptr_parameter_group_bw_x);
 	assert(ptr_parameter_group_bw_y);
 	assert(objptr);
@@ -601,10 +602,17 @@ void 	Analysis_tpdd_differential_all(tpdd *tpe, char * symbol_name);
 void 	Analysis_tpdd_element(tpdd * tpe, char * symbol_name);
 void	Analysis_tpdd_freq_constant(tpdd *tpe, char *symbol_name);
 void 	Tree_modify(tpdd *tpe, char * symbol_name);
+void    FindSensitivity2D(tpdd* tpe, Analysis* analysis);
+void    FindDomSensitivity2D(tpdd* TPE, Analysis* analysis);
+//Temp For Test By Ma Diming
+void	MakeMosfetMatch(tpdd* tpe);
 
 #ifdef PRINT_TO_FILE
 ofstream dataFile;
 ofstream dataFile_single;
+ofstream sensFileMag("SensMag.dat");
+ofstream sensFilePhase("SensPhase.dat");
+ofstream freqResonse2Dfile("FreqRes2D.dat");
 #endif // PRINT_TO_FILE
 
 // Dump help information on screen.
@@ -702,6 +710,7 @@ int main(int argc, char *argv[])
 											 toGraph->getE(), 
 											 toGraph->getM(),
 											 toGraph->getEdgeList());
+		mytpdd1->SetMosfetList(toGraph->getMosfetList());
 		printf("mytpdd1 done.\n");
 #ifdef PARALLEL_COMPUTING
 		}
@@ -714,6 +723,7 @@ int main(int argc, char *argv[])
 											 toGraph2->getE(), 
 											 toGraph2->getM(),
 											 toGraph2->getEdgeList());
+		mytpdd2->SetMosfetList(toGraph->getMosfetList());
 		printf("mytpdd2 done.\n");
 		}
 #else // PARALLEL_COMPUTING
@@ -806,8 +816,12 @@ int main(int argc, char *argv[])
 #pragma omp section
 		{
 #endif // PARALLEL_COMPUTING
+                        double ttStart = clock();
 			mytpdd1->InitialRoot();
 			mytpdd1->MintySpan();
+			double ttEnd = clock();
+			cout<<"Construction Timing is "<<1.0*(ttEnd-ttStart)/1000000 << endl;
+
 			cout << "MintySpan()" << endl;
 			//	cout << "\nStats: " << RunStats();
 			// cout << endl;
@@ -953,42 +967,57 @@ int main(int argc, char *argv[])
 		mytpdd1->PrintTransferFunc(cout);
 		cout << "-> Finish printing the Transfer Function H(s) ... ... ... ..." << endl;
 #endif
-		// sensitivity symbol
-	// char symb_name[] = "CC";
 
+//Symbolic sensitivity With Fixed symbol value but different frequency
+#ifdef ELEMENT_CONSTANT
+	Analysis_tpdd_element(mytpdd1, "CC");
+#endif
+
+#if 0
+//Stastic Function, After sensitivity
 #ifdef	STRUCTURE_MODIFY
 	Tree_modify(mytpdd1, symb_name);
 #endif
-#ifdef TEST_CHARACTERISTIC
-	test(mytpdd1,symb_name);	
 #endif
-#ifdef ELEMENT_CONSTANT
-	Analysis_tpdd_element(mytpdd1, symb_name);
-#endif
+
+#if 0
+//Numerical Verification for symbol variable
 //Numerical analysis of the tranfer funtion when the value of symb_name is changed
 #ifdef NUM_ANALYSIS_MUL
 	cout << "Begin numerical Evaluation when the value of symb is changed" << endl;
 	Analysis_tpdd_mul(mytpdd1,symb_name);
 #endif
+#endif
 
+#if 0
+//Symbolic sensitivity at exact frequency & symbol value, just for test
 //Numerical analysis of the differential
 #ifdef NUM_ANALYSIS_DIFFERENTIAL_SINGLE
 	cout << "calculate the differential " << endl;
 	Analysis_tpdd_differential(mytpdd1, symb_name);
 #endif
+#endif
 
+//As mentioned by menxiaoxuan the function is wrong
+#if 0
 #ifdef NUM_ANALYSIS_DIFFERENTIAL_FREQ
 	cout << "calculate the differential with the freqency varied.." << endl;
 	Analysis_tpdd_differential_freq(mytpdd1, symb_name);
+#endif
 #endif
 
 #ifdef NUM_ANALYSIS_DIFFERENTIAL_ALL
 	cout << "calcute the dirrerential with all the available.." << endl;
 Analysis_tpdd_differential_all(mytpdd1, symb_name);
 #endif
+
+#if 0
+//Symbolic sensitivity With fixed frequency and variable symbol
 #ifdef 	FREQUENCY_CONSTANT
 	Analysis_tpdd_freq_constant(mytpdd1, symb_name);
 #endif	
+#endif
+
 // Numerical analysis of the transfer function
 
 #ifdef NUM_ANALYSIS // travese the whole tree slowly
@@ -1017,6 +1046,9 @@ Analysis_tpdd_differential_all(mytpdd1, symb_name);
 #ifndef GUI3D
 	map<string, double *> name_pvalue_map;
 	map<string, Mosfet *> name_pmosfet_map;
+#ifdef CONSIDER_MATCHED
+	MakeMosfetMatch(mytpdd1);
+#endif
 	mytpdd1->get_name_ptrvalue_map(name_pvalue_map,name_pmosfet_map);
 	ptr_analysis1 = new Analysis(mytpdd1);
 	ptr_analyser1 = new Analyser(ptr_analysis1, name_pvalue_map, name_pmosfet_map);
@@ -1027,6 +1059,16 @@ Analysis_tpdd_differential_all(mytpdd1, symb_name);
 	double start_freq = 0.01, stop_freq = 1.0e9; // Hz
 	// Default number of numerical points plotting on a curve
 	int num_points = 100;
+	// Do Mosfet Sensitivity
+
+	double tStart = clock();
+	FindSensitivity2D(mytpdd1,ptr_analysis1);
+	double tEnd = clock();
+	cout<<"Evaluation of All Transistor Timing is "<<(tEnd-tStart)/1000000 << endl;
+	tStart = clock();
+	FindDomSensitivity2D(mytpdd1,ptr_analysis1);
+        tEnd = clock();
+        cout<<"Evaluation of Dominant Pole is "<<(tEnd-tStart)/1000000 << endl;
 	Buffer buffer(ptr_analyser1,
 								start_freq, stop_freq, num_points,
 								freq_scale, magnitude_scale);
@@ -1106,7 +1148,8 @@ Analysis_tpdd_differential_all(mytpdd1, symb_name);
 			// Here are the global MainWrapper objects.
 			printf("Band Width:\n");
 			main_wrapper_global_band_width = new MainWrapper(
-				"GBW (Hz)",
+				//"GBW (Hz)",
+				"Ft (Hz)",
 				ptr_analyser2,
 				ptr_parameter_group_bw_x->min(),
 				ptr_parameter_group_bw_x->max(),
@@ -1117,7 +1160,8 @@ Analysis_tpdd_differential_all(mytpdd1, symb_name);
 				band_width);
 			printf("Gradient of Band Width:\n");
 			main_wrapper_global_band_width_sens = new MainWrapper(
-				"|grad(GBW)|",
+				//"|grad(GBW)|",
+				"|grad(Ft)|",
 				ptr_analyser2,
 				ptr_parameter_group_bw_x->min(),
 				ptr_parameter_group_bw_x->max(),
@@ -1257,6 +1301,12 @@ Analysis_tpdd_differential_all(mytpdd1, symb_name);
 #endif //	CALC_SCOEFFICIENTS
 #endif // DISP_STATISTICS
 
+
+#ifdef PRINT_TO_FILE
+	sensFileMag.close();
+	sensFilePhase.close();
+	freqResonse2Dfile.close();
+#endif
 #ifndef GUI3D
 	//  Destruct the TPDD object
 	cout << "Start to destruct the TPDD object:" << endl;

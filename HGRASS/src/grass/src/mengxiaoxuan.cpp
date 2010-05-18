@@ -1,8 +1,22 @@
 #include "tpdd.h"
 #include "Analysis.h"
 #include <iostream>
+#include <iomanip>
+#include <fstream>
+#include <map>
+#include <vector>
 using std::cout;
 using std::endl;
+using std::ofstream;
+using std::setw;
+using std::setprecision;
+using std::ios;
+using std::map;
+using std::vector;
+
+extern ofstream sensFileMag;
+extern ofstream sensFilePhase;
+
 int compare (const void * a, const void * b)
 {
 	// return ( (*(SymbNd**)a)->isSrc - (*(SymbNd**)b)->isSrc );
@@ -42,7 +56,7 @@ void Analysis_tpdd(tpdd * tpe)
 			freq = start + i * step;
 			//	freq = i * step;
 			//		cout << setw(10) << setprecision(2) << freq;
-			//			dataFile << setw(10) << setprecision(0) << freq;
+			//			sensFileMag << setw(10) << setprecision(0) << freq;
 			//                  cout << "i is :" << i << " j is : " << j << endl;
 			H = analysis->Evaluate(tpe->GetRootNode(), freq);
 		}
@@ -81,7 +95,7 @@ void Analysis_scoeff(tpdd * tpe)
 				freq = start + i * step;
 				H = analysis->EvaluateSCoeffFreq(freq); // core
 #ifdef PRINT_TO_FILE
-				dataFile << H << "\n";
+				sensFileMag << H << "\n";
 #endif // PRINT_TO_FILE
 			}
 			start *= 10;
@@ -111,7 +125,7 @@ void Analysis_scoeff(tpdd * tpe)
 				freq = start + i * step;
 				H = analysis->EvaluateSCoeffFreq(freq); // core
 #ifdef PRINT_TO_FILE
-				dataFile2 << H << "\n";
+				sensFilePhase << H << "\n";
 #endif // PRINT_TO_FILE
 			}
 			start *= 10;
@@ -183,8 +197,8 @@ void Analysis_tpdd_mul(tpdd * tpe, char * symbol_name)
 		{
 			freq = start_freq + i * step_freq;
 #ifdef PRINT_TO_FILE
-			dataFile << setw(10) << setprecision(4) << log10(freq);
-			dataFile << setw(20) << setprecision(6) << db20(H_s[0][m])
+			sensFileMag << setw(10) << setprecision(4) << log10(freq);
+			sensFileMag << setw(20) << setprecision(6) << db20(H_s[0][m])
 				<< setw(20) << setprecision(6) << db20(H_s[1][m])
 				<< setw(20) << setprecision(6) << db20(H_s[2][m])
 				<< setw(20) << setprecision(6) << db20(H_s[3][m])
@@ -234,274 +248,84 @@ void Analysis_tpdd_differential(tpdd * tpe, char * symbol_name)
 	cout << "diff computing time is : " << (finish-start)/1000000 << endl;
 }
 
-void Analysis_tpdd_differential_freq(tpdd * tpe, char * symbol_name)
-{
-	Analysis * analysis = new Analysis(tpe);
-	int i, j;
-
-	double freq = 1000;
-	E_value H_s[100];
-	E_value H[100];
-	complex_t H_diff[100];
-	complex_t Hs[100];
-
-	int sen_order = 0;
-	sen_order = tpe->Determine_tag(symbol_name);	
-	double symbol_value = 3e-12;
-	double start = 1, step = 1;
-	double start_time, finish;
-	int count = 0;
-	// complex_t test[100];
-	start_time = clock();
-	for(j = 0; j < 10; j++)
-	{
-		for(i = 0; i < 10; i++)
-		{
-			freq = start + i * step;
-			H_s[count] = analysis->Evaluate_complex(tpe->GetRootNode(),freq);
-			//test[count] = analysis->Evaluate(tpe->GetRootNode(), freq);	
-			count++;
-		}
-		start *=10;
-		step *=10;
-	}
-	finish = clock();
-	cout << "time is : " << (finish-start_time)/1000000 << endl;
-	start = 1;
-	step = 1;
-	count = 0;
-	start_time = clock();
-	for(j = 0; j < 10; j++)
-	{
-		for(i = 0; i < 10; i++)
-		{
-			freq = start + i * step;
-			H[count]= analysis->Evaluate_complex_diff(tpe->GetRootNode(),symbol_value, symbol_name, sen_order, freq);
-			count++;
-		}
-		start *= 10;
-		step *= 10;	
-	}
-	finish = clock();
-	cout << "time_diff is " << (finish - start_time)/1000000 << endl;
-	int shortsign = tpe->GetRootNode()->GetSignS();
-	int opensign = tpe->GetRootNode()->GetSignO();
-	// int test_count = 0;
-	for(i = 0; i < 100; i++)
-	{
-		if(H_s[i].den == complex_t(0))
-		{
-			cout << "\n Divide by zero. " << endl;
-			Hs[i] = (-1)*H_s[i].num*DBL_MAX;
-			H_diff[i] = (-1)*(H[i].num*H_s[i].den - H[i].den*H_s[i].num) * DBL_MAX;
-		}
-		else
-		{
-
-			Hs[i] = (-1)*H_s[i].num*shortsign/(H_s[i].den*opensign);
-			H_diff[i]=(-1)*shortsign*opensign*(H[i].num*H_s[i].den - H[i].den*H_s[i].num)/(H_s[i].den*H_s[i].den);
-			//cout << "test_count is : " << test_count << endl;
-			//test_count++;
-		}
-
-	}
-	complex_t *mag_diff;
-	mag_diff = new complex_t[100];
-	for(i = 0; i < 100; i++)
-	{
-
-		mag_diff[i]=(H_diff[i]*conj(Hs[i])+conj(H_diff[i])*Hs[i])/(2*magn(Hs[i]));
-		cout << "mag_diff is " << mag_diff[i] << endl;
-	}
-
-	int m = 0;
-	start = 1;
-	step = 1;
-	for(j = 0; j < 10; j++)
-	{
-		for(i = 0; i < 10; i++)
-		{
-			freq = start + i*step;
-#ifdef PRINT_TO_FILE
-			dataFile << setw(10) << setprecision(10) << log10(freq);
-			dataFile << setw(20) << setprecision(4)
-				<< setiosflags(ios::fixed) <<3e-12*2*PI*freq* mag_diff[m]/magn(Hs[m]) << endl;
-#endif // PRINT_TO_FILE
-			m++;
-		}
-		start *=10;
-		step *=10;
-	}
-
-}
-void test(tpdd *tpe, char * symbol_name)
-{
-	Analysis *analysis = new Analysis(tpe);
-
-	double freq = 5000;
-
-	int sen_order = 0;
-	double start;
-	double finish;
-	start = clock();
-	sen_order = tpe->Determine_tag(symbol_name);
-	finish = clock();
-	cout << "find time is : " << (finish - start)/1000 << endl;	
-	cout << "***********sensitivity tag information is : " << sen_order << "********** " << endl; 
-	E_value data;
-	data = analysis->Evaluate_complex(tpe->GetRootNode(),freq);
-	cout << "**************the information of H(s)********" << endl;
-	cout << "data.num is : " << data.num << "data.den is  : " << data.den << endl;
-	E_value diff;
-	double symbol_value = 1e+3;
-	//	diff = analysis->Evaluate_complex_diff(tpe->GetRootNode(), symbol_value, symbol_name, sen_order, freq);
-	//	cout << "diff.num is : " << diff.num << "diff.den is : " << diff.den
-	//<< endl;
-	//	symbol_value = 400000;
-	//	tpe->Modify_value(symbol_value, sen_order, symbol_name);
-	// double initial_value = tpe->Search_value(sen_order, symbol_name);
-	E_value diff_factor;
-	diff_factor = analysis->Evaluate_complex_diff_factor(tpe->GetRootNode(), symbol_value, symbol_name, sen_order, freq);
-	cout << "diff_factor.num is : " <<diff_factor.num << "diff_factor.den is : " << diff_factor.den << endl;
-}
 void    Analysis_tpdd_element(tpdd *tpe, char * symbol_name)
 {
+	int N = SAMPLE_NUM_SENS;
 	Analysis *analysis = new Analysis(tpe);
+	E_value H_s[N];
+	E_value H_d[N];
+	complex_t H_diff[N];
+	complex_t Hs[N];
 
-	int i,j;
-
-	double freq = 1000;
-	E_value H_s[100];
-
-	E_value H_d[100];
-	// E_value H_d_conj[100];
-	complex_t H_diff[100];
-	complex_t H_diff_conj[100];
-	complex_t Hs[100];
-
-	int sen_order = 0;
-	sen_order = tpe->Determine_tag(symbol_name);
-	double symbol_value = 0;
-	symbol_value = tpe->Search_value(sen_order, symbol_name);
-	//	cout << "symbol_value is : " << symbol_value << endl;
-	double start = 1;
-	double step = 1	;
-	int count = 0;
-	// complex_t test[100];
-	//	tpe->Element_conj(freq);
-	double time_begin = clock();
-	for(j = 0; j < 7; j++)
-	{
-		for(i = 0; i < 10; i++)
-		{
-			freq = start + i*step;
-			H_s[count] = analysis->Evaluate_complex(tpe->GetRootNode(), freq);
-			//			cout << "num is : " << H_s[count].num << endl;
-			//			cout << "den is : " << H_s[count].den << endl;
-			count++;
-		}
-		start *=10;
-		step *=10;
-	}
-	double time_end = clock();
-	cout << "time is : "<< (time_end - time_begin) << endl;
-
-	time_begin = clock();
-
-	start = 1;
-	step = 1;
-	count = 0;
-	E_value test1;
-
-	for(j = 0; j < 7; j++)
-	{
-		for(i = 0; i < 10; i++)
-		{
-			freq = start + i*step;
-			//test1 = analysis->Evaluate_complex_diff(tpe->GetRootNode(),symbol_value, symbol_name, sen_order, freq);			
-			H_d[count] = analysis->Evaluate_complex_diff_factor(tpe->GetRootNode(),symbol_value, symbol_name, sen_order, freq);
-			//	test1 = analysis->Evaluate_complex_diff(tpe->GetRootNode(),symbol_value, symbol_name, sen_order, freq);
-			//			cout << "H_d " << H_d[count].num << endl;
-			//			cout << "E_value is : " << test1.num << endl;
-			count++;			
-		}
-		start *=10;
-		step *=10;
-	}
-	time_end = clock();
-	cout << "time_diff is : "<< (time_end - time_begin) << endl;
-	start = 1;
-	step = 1;
-	count = 0;
-
-	//count = 0;
-	/*	for(j = 0; j < 7; j++)
-		{
-		for(i = 0; i < 10; i ++)
-		{
-		freq = start + i*step;
-		H_d_conj[count] = analysis->Evaluate_complex_diff_factor(tpe->GetRootNode(),symbol_value, symbol_name, sen_order, freq);
-		}
-		}
-		*/
-
+	int sen_order = tpe->Determine_tag(symbol_name);
+	double symbol_value = tpe->Search_value(sen_order, symbol_name);
 	int shortsign = tpe->GetRootNode()->GetSignS();
 	int opensign = tpe->GetRootNode()->GetSignO();	
-	//	cout << "shotr sign is : " << shortsign << endl;
-	//	cout << "open sign is : " << opensign << endl;
 
-	for(i = 0; i < 70; i++)
+	double freq[N];
+	double step = 1;
+	for(int count=0, i=0; i<7; i++)
 	{
-		if(H_s[i].den == complex_t(0))
+		for(int j=0; j<9; j++)
 		{
-			cout << "\n Divide by zero. " << endl;
-			Hs[i] = -H_s[i].num * DBL_MAX;
-			H_diff[i] = (-1)*(H_d[i].num*H_s[i].den - H_d[i].den*H_s[i].num) * DBL_MAX;
-			H_diff_conj[i] = (-1)*((-1)*conj(H_d[i].num)*conj(H_s[i].den) +conj( H_d[i].den)*conj(H_s[i].num)) * DBL_MAX;
-		}
-		else
-		{
-			Hs[i] = (-1)*H_s[i].num*shortsign/(H_s[i].den*opensign);
-			//			cout << "Hs[i] is : " << Hs[i] << endl;
-			//			cout << "db is : " << db20(Hs[i]) << endl;			
-			H_diff_conj[i]=(-1)*shortsign*opensign*((1)*conj(H_d[i].num)*conj(H_s[i].den)- conj( H_d[i].den)*conj(H_s[i].num))/(conj(H_s[i].den)*conj(H_s[i].den));
-			H_diff[i] = (-1)*shortsign*opensign*((H_d[i].num)*(H_s[i].den) -( H_d[i].den)*(H_s[i].num))/((H_s[i].den)*(H_s[i].den));
-			//			cout << "diff is : " << H_diff[i] << endl;
-		}
-	}
-	complex_t *mag_diff;
-	mag_diff = new complex_t[100];
-	complex_t *phase_diff;
-	phase_diff = new complex_t[100];
-	complex_t a  = complex_t(0,1);
-	//	cout << "a is  " << a << endl;
-	for(i = 0; i < 70; i++)
-	{
-		//		cout << "result" << endl;
-		mag_diff[i]=((H_diff[i]*conj(Hs[i])+(H_diff_conj[i])*Hs[i])/(2*magn(Hs[i])));
-		// phase_diff[i] = (H_diff[i]*a-mag_diff[i]*Hs[i]/magn(Hs[i]))/(Hs[i]*a);
-		cout << "phase is : " << phase_diff[i] << endl;
-		cout << "mag_diff is " << mag_diff[i] << endl;
-	}
-	start = 1;
-	step = 1;
-	count = 0;
-	for(j = 0; j < 7; j++)
-	{
-		for(i = 0; i < 10; i++)
-		{
-			freq = start + i*step;
-#ifdef PRINT_TO_FILE
-			dataFile << setw(10) << setprecision(10) << freq;
-			dataFile << setw(20) << setprecision (10) 
-				<< setiosflags(ios::fixed) << (3.09e-2/magn(Hs[count]))*mag_diff[count] << endl;			
-#endif // PRINT_TO_FILE
+			freq[count] = step+j*step;
 			count++;
-		}		
-		start *=10;
+		}
 		step *= 10;
 	}
 
+	//time_begin = clock();
+	for(int count=0, i=0; i<7; i++)
+	{
+		for(int j=0; j<9; j++)
+		{
+			H_s[count] = analysis->Evaluate_complex(tpe->GetRootNode(), freq[count]);
+			if(H_s[count].den == complex_t(0))
+				Hs[count] = (-1)*H_s[count].num*shortsign*DBL_MAX*opensign;
+			else
+				Hs[count] = (-1)*H_s[count].num*shortsign/(H_s[count].den*opensign);
+
+			H_d[count] = analysis->Evaluate_complex_diff_factor(tpe->GetRootNode(),symbol_value, symbol_name, sen_order, freq[count]);
+			if(H_s[count].num == complex_t(0))
+				H_d[count].num = H_d[count].num * symbol_value * DBL_MAX;
+			else
+				H_d[count].num = H_d[count].num * symbol_value / H_s[count].num;
+			if(H_s[count].den == complex_t(0))
+				H_d[count].den = H_d[count].den * symbol_value * DBL_MAX;
+			else
+				H_d[count].den = H_d[count].den * symbol_value / H_s[count].den;
+			H_diff[count] = (H_d[count].num-H_d[count].den);
+			count++;			
+		}
+	}
+	//time_end = clock();
+	//cout << "time_diff is : "<< (time_end - time_begin) << endl;
+
+	double *mag_diff = new double[N];
+	double *phase_diff = new double[N];
+	//complex_t a  = complex_t(0,1);
+	for(int count=0, i=0; i<7; i++)
+	{
+		for(int j=0; j<9; j++)
+		{
+			mag_diff[count] = H_diff[count].real();
+		        phase_diff[count] = H_diff[count].imag()/arg(Hs[count]);
+#ifdef PRINT_TO_FILE
+			sensFileMag << setw(10) << setprecision(10) << freq[count];
+			sensFileMag << setw(20) << setprecision (10) 
+				<< setiosflags(ios::fixed) << mag_diff[count] << endl;
+			sensFilePhase << setw(10) << setprecision(10) << freq[count];
+			sensFilePhase << setw(20) << setprecision (10)
+				<< setiosflags(ios::fixed) << phase_diff[count] << endl;
+#endif // PRINT_TO_FILE
+			count++;
+		}		
+	}
+	delete analysis;
+	delete [] mag_diff;
+	delete [] phase_diff;
+	//system("matlab -nosplash -r SizingSensitivity &");
+	//system("matlab -r SizingSensitivity &");
 }
 void    Analysis_tpdd_freq_constant(tpdd *tpe, char *symbol_name)
 {
@@ -589,8 +413,8 @@ void    Analysis_tpdd_freq_constant(tpdd *tpe, char *symbol_name)
 		freq = 10;
 		symbol_value = start_element + i*step_element;
 #ifdef PRINT_TO_FILE
-		dataFile << setw(10) << setprecision(4) << symbol_value;
-		dataFile << setw(20) << setprecision(4)<<symbol_value*mag_diff[0][i]/magn(Hs[0][i])
+		sensFileMag << setw(10) << setprecision(4) << symbol_value;
+		sensFileMag << setw(20) << setprecision(4)<<symbol_value*mag_diff[0][i]/magn(Hs[0][i])
 			<< setw(20) << setprecision(4)<<symbol_value*mag_diff[1][i]/magn(Hs[1][i])
 			<< setw(20) << setprecision(4)<<symbol_value*mag_diff[2][i]/magn(Hs[2][i])
 			<< setw(20) << setprecision(4)<<symbol_value*mag_diff[3][i]/magn(Hs[3][i])
@@ -626,4 +450,274 @@ void Tree_modify(tpdd *tpe, char * symbol_name)
 	time2 = clock();
 	cout  << "time is : " << (time2-time1)/1000000 << endl;
 	cout << "4" << endl;
+}
+
+
+//Added By Ma Diming for Mosfet Senstivity
+void	FindSensitivity2DR(tpdd* tpe, Analysis* analysis, E_value* H_s, complex_t* Hs, char* symbol_name, double symbol_coef, double* mag_diff, double* phase_diff, double* freq, int N)
+{
+	E_value H_d[N];
+	complex_t H_diff[N];
+
+	int sen_order = tpe->Determine_tag(symbol_name);
+	double symbol_value = tpe->Search_value(sen_order,symbol_name);
+
+	double symbol_value_GM1 = tpe->Search_value(tpe->Determine_tag("GM_1"),"GM_1");
+
+	for(int count=0,i=0; i<N; count++,i++)
+	{
+		H_d[count] = analysis->Evaluate_complex_diff_factor(tpe->GetRootNode(),symbol_value,symbol_name,sen_order,freq[count]);
+		//ToDo: [Opt] DBL_MAX related multiplication can directly set to DBL_MAX
+		if(H_s[count].num == complex_t(0))
+			H_d[count].num = H_d[count].num * symbol_value * DBL_MAX;
+		else
+			H_d[count].num = H_d[count].num * symbol_value / H_s[count].num;
+		if(H_s[count].den == complex_t(0))
+			H_d[count].den = H_d[count].den * symbol_value * DBL_MAX;
+		else
+			H_d[count].den = H_d[count].den * symbol_value / H_s[count].den;
+		H_diff[count] = (H_d[count].num-H_d[count].den);
+		mag_diff[count] += symbol_coef * H_diff[count].real();
+		phase_diff[count] += symbol_coef * H_diff[count].imag()/arg(Hs[count]);
+	}
+}
+
+void    FindSensitivity2D(tpdd* tpe, Analysis* analysis)
+{
+	Mosfet* pMosfetHead = tpe->GetMosfetList();
+	Mosfet* pMosfet = pMosfetHead;
+
+	int N = SAMPLE_NUM_SENS;
+	double freq[N];
+	double step = 1;
+	for(int count=0, i=0; i<7; i++)
+	{
+		for(int j=0; j<9; j++)
+		{
+			freq[count] = step+j*step;
+			count++;
+		}
+		step *= 10;
+	}
+
+	//ToDo: [Opt] Merge All tpe->GetRootNode() into one
+	int shortsign = tpe->GetRootNode()->GetSignS();
+	int opensign = tpe->GetRootNode()->GetSignO();	
+	E_value H_s[N];
+	complex_t Hs[N];
+	for(int count=0,i=0; i<N; count++,i++)
+	{
+		H_s[count] = analysis->Evaluate_complex(tpe->GetRootNode(), freq[count]);
+		//ToDo: [Opt] Use bit operation to replace sign multiplication
+		if(H_s[count].den == complex_t(0))
+			Hs[count] = (-1) * H_s[count].num * shortsign * DBL_MAX * opensign;
+		else
+			Hs[count] = (-1) * H_s[count].num * shortsign / (H_s[count].den*opensign);
+	}
+
+	double* magDiff = new double [N];
+	double* phaseDiff = new double [N];
+	while(pMosfet)
+	{
+		//ToDo: [Opt] Use memset to initialize
+		for(int i=0; i<N ;i++)
+			magDiff[i] = 0, phaseDiff[i] = 0;
+		map<char*, double>* modelDevices = pMosfet->getModelDevices();
+		if(modelDevices == NULL)
+			pMosfet = pMosfet->next;
+		double tStart = clock();
+		for(map<char*, double>::const_iterator it = modelDevices->begin();
+		    it != modelDevices->end(); ++it)
+		{
+			char* symbolName = (char*)it->first;
+			if(symbolName == NULL)
+				continue;
+        		double value = (double)it->second;
+			FindSensitivity2DR(tpe,analysis,H_s,Hs,symbolName,value,magDiff,phaseDiff,freq,N);
+			//ToDo: For Mengxiaoxuan Paper's test ua741
+			//FindSensitivity2DR(tpe,analysis,H_s,Hs,"CC",1,magDiff,phaseDiff,freq);
+		}
+		double tEnd = clock();
+		cout << "Time / Mosfet = " << (tEnd-tStart)*1.0/1e6 <<endl;
+		#ifdef PRINT_TO_FILE
+		for(int count=0,i=0; i<N; count++,i++)
+		{
+			sensFileMag << setw(10) << setprecision(10) << freq[count];
+			sensFileMag << setw(20) << setprecision (10) 
+				<< setiosflags(ios::fixed) << magDiff[count] << endl;
+			sensFilePhase << setw(10) << setprecision(10) << freq[count];
+			sensFilePhase << setw(20) << setprecision (10)
+				<< setiosflags(ios::fixed) << phaseDiff[count] << endl;
+		}
+		#endif
+		delete modelDevices;
+		pMosfet = pMosfet->next;
+	}
+	delete [] magDiff;
+	delete [] phaseDiff;
+	//system("matlab -nosplash -r SizingSensitivity &");
+	//system("matlab -r SizingSensitivity &");
+}
+#ifdef CONSIDER_MATCHED
+Mosfet* FindMosfet(tpdd* tpe, char* name)
+{
+	Mosfet* pMosfetHead = tpe->GetMosfetList();
+	Mosfet* pMosfet = pMosfetHead;
+	while(pMosfet)
+	{
+		if(!strcmp(pMosfet->name,name))
+			return pMosfet;
+		pMosfet = pMosfet->next;
+	}
+	return NULL;
+}
+
+void    MakeMosfetMatch(tpdd* tpe)
+{
+	Mosfet* pMosfetHead = tpe->GetMosfetList();
+	Mosfet* pMosfet = pMosfetHead;
+	//Hard Code
+	while(pMosfet)
+	{
+		if(!strcmp(pMosfet->name,"M1"))
+		  pMosfet->pMatch = FindMosfet(tpe,"M2");
+		else if(!strcmp(pMosfet->name,"M1"))
+		  pMosfet->pMatch = FindMosfet(tpe,"M1");
+		else if(!strcmp(pMosfet->name,"M3"))
+		  pMosfet->pMatch = FindMosfet(tpe,"M4");
+		else if(!strcmp(pMosfet->name,"M4"))
+		  pMosfet->pMatch = FindMosfet(tpe,"M3");
+		pMosfet = pMosfet->next;
+	}
+}
+#endif
+
+//Pole-Zero Part By Zengmei
+complex_t EvaluateDomPole(tpdd* TPE, Analysis* analysis, complex_t* coefs, int* coefIndex)
+{
+	analysis->EvaluateSCoeff();
+	complex_t ctzero = complex_t(0);
+	complex_t a0,a1,b0,b1;
+        a0=a1=b0=b1=ctzero;
+
+	vector<scoeffNode*> *psCoeff = NULL;
+	vector<int>         *psPower = NULL;
+	//Assume The 1st index of DEN is s^0
+        psCoeff    = TPE->pExpTpddRoot->pOpen->sCoeffList;
+        psPower    = TPE->pExpTpddRoot->pOpen->sPowerList;
+        int base = (*psPower)[0];
+        int sign_den = TPE->pExpTpddRoot->signO;
+        a0 = ((*psCoeff)[0]->GetValue())*sign_den;
+	coefIndex[0] = 0;
+	a1 = (*psPower)[1]-base == 1 ? ((*psCoeff)[1]->GetValue())*sign_den : ctzero;
+	coefIndex[1] = (*psPower)[1]-base == 1 ? 1 : -1;
+
+        psCoeff    = TPE->pExpTpddRoot->pShort->sCoeffList;
+        psPower    = TPE->pExpTpddRoot->pShort->sPowerList;
+        int sign_num = TPE->pExpTpddRoot->signS*(-1);
+	b0 = (*psPower)[0]-base==0 ? sign_num*((*psCoeff)[0]->GetValue()) : ctzero;
+	coefIndex[2] = (*psPower)[0]-base==0 ? 0 : -1;
+	b1 = (*psPower)[0]-base==1 ? sign_num*((*psCoeff)[0]->GetValue()) :
+	     (*psPower)[1]-base==1 ? sign_num*((*psCoeff)[1]->GetValue()) : ctzero;
+	coefIndex[3] = (*psPower)[0]-base==1 ? 0 :
+	               (*psPower)[1]-base==1 ? 1 : -1;
+
+        complex_t dompole = a0*b0/(a0*b1-b0*a1);
+
+	cout<<"The Dominant Pole is "<<dompole/(2*PI)<<" in Hz"<<endl;
+	coefs[0] = a0;
+	coefs[1] = a1;
+	coefs[2] = b0;
+	coefs[3] = b1;
+	return dompole;
+}
+
+complex_t FindDomSensitivity2DR(tpdd* TPE, Analysis* analysis, char* symbolName, complex_t coefValue, double sensValue,
+				bool isNum, int coefIndex)
+{
+	vector<scoeffNode*> *pCoeff = NULL;
+	int flag = 0;
+	if(isNum)
+	{
+		pCoeff = TPE->pExpTpddRoot->pShort->sCoeffList;
+		flag = TPE->pExpTpddRoot->signS*(-1);
+	}
+	else
+	{
+		pCoeff = TPE->pExpTpddRoot->pOpen->sCoeffList;
+		flag = TPE->pExpTpddRoot->signO;
+	}
+	if(pCoeff == NULL)
+		return complex_t(0);
+	int index = TPE->Determine_tag(symbolName);
+        double symbValue = TPE->Search_value(index,symbolName);
+	//TPE->PrintScoeffPath(cout,(*pCoeff)[coefIndex]);
+	complex_t rst = analysis->EvaluateSCoeffSensitivity((*pCoeff)[coefIndex],symbolName,index);
+	return sensValue*flag*rst*symbValue/coefValue;
+}
+
+void FindDomSensitivity2D(tpdd* TPE, Analysis* analysis)
+{
+	complex_t* domPoleCoefs = new complex_t [4];
+	int* coefIndex = new int [4];
+	complex_t dom = EvaluateDomPole(TPE,analysis,domPoleCoefs,coefIndex);
+	complex_t a0 = domPoleCoefs[0];
+	complex_t a1 = domPoleCoefs[1];
+	complex_t b0 = domPoleCoefs[2];
+	complex_t b1 = domPoleCoefs[3];
+	complex_t a0b1_a1b0_square = (a0*b1-a1*b0)*(a0*b1-a1*b0);
+
+	complex_t sensPdA0 = -1*a1*b0*b0*a0/(a0b1_a1b0_square*dom);
+	complex_t sensPdA1 = a0*b0*b0*a1/(a0b1_a1b0_square*dom);
+	complex_t sensPdB0 = a0*a0*b1*b0/(a0b1_a1b0_square*dom);
+	complex_t sensPdB1 = -1*a0*a0*b0*b1/(a0b1_a1b0_square*dom);
+
+	Mosfet* pMosfetHead = TPE->GetMosfetList();
+	Mosfet* pMosfet = pMosfetHead;
+	while(pMosfet)
+	{
+		complex_t sensA0Symb = complex_t(0);
+		complex_t sensA1Symb = complex_t(0);
+		complex_t sensB0Symb = complex_t(0);
+		complex_t sensB1Symb = complex_t(0);
+		map<char*, double>* modelDevices = pMosfet->getModelDevices();
+		if(modelDevices == NULL)
+			pMosfet = pMosfet->next;
+		double tStart = clock();
+		for(map<char*, double>::const_iterator it = modelDevices->begin();
+		    it != modelDevices->end(); ++it)
+		{
+			char* symbolName = (char*)it->first;
+			if(symbolName == NULL)
+				continue;
+        		double value = (double)it->second;
+			if(sensPdA0 != complex_t(0))
+				sensA0Symb += FindDomSensitivity2DR(TPE,analysis,symbolName,a0,value,false,coefIndex[0]);
+			if(sensPdA1 != complex_t(0))
+				sensA1Symb += FindDomSensitivity2DR(TPE,analysis,symbolName,a1,value,false,coefIndex[1]);
+			if(sensPdB0 != complex_t(0))
+				sensB0Symb += FindDomSensitivity2DR(TPE,analysis,symbolName,b0,value,true,coefIndex[2]);
+			if(sensPdB1 != complex_t(0))
+				sensB1Symb += FindDomSensitivity2DR(TPE,analysis,symbolName,b1,value,true,coefIndex[3]);
+			/* For test of RC
+			if(sensPdA0 != complex_t(0))
+				sensA0Symb += FindDomSensitivity2DR(TPE,analysis,"C1",a0,1,false,coefIndex[0]);
+			if(sensPdA1 != complex_t(0))
+				sensA1Symb += FindDomSensitivity2DR(TPE,analysis,"C1",a1,1,false,coefIndex[1]);
+			if(sensPdB0 != complex_t(0))
+				sensB0Symb += FindDomSensitivity2DR(TPE,analysis,"C1",b0,1,true,coefIndex[2]);
+			if(sensPdB1 != complex_t(0))
+				sensB1Symb += FindDomSensitivity2DR(TPE,analysis,"C1",b1,1,true,coefIndex[3]);
+				*/
+		}
+		complex_t sensPd = sensPdA0*sensA0Symb+sensPdA1*sensA1Symb+sensPdB0*sensB0Symb+sensPdB1*sensB1Symb;
+		double tEnd = clock();
+		cout << "Time / Mosfet = " << (tEnd-tStart)*1.0/1e6 <<endl;
+		cout << "The Sensitivity of Dominant Pole (3dB Pole) w.r.t. Mosfet "<<pMosfet->name<<" is "<<sensPd<<endl;
+		//cout << "The Sensitivity of Dominant Pole (3dB Pole) w.r.t. C1 is "<<sensPd<<endl;
+		delete modelDevices;
+		pMosfet = pMosfet->next;
+	}
+
+	delete [] domPoleCoefs;
 }

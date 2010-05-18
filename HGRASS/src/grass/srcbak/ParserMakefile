@@ -1,0 +1,85 @@
+#
+# PCCTS makefile for: netgram.g
+#
+# Created from: genmk -CC -class netparser -pccts_path /home/shared-folder/pccts netgram.g
+#
+# PCCTS release 1.33MR23
+# Project: t
+# C++ output
+# DLG scanner
+# ANTLR-defined token types
+#
+TOKENS = tokens.h
+#
+# The following filenames must be consistent with ANTLR/DLG flags
+DLG_FILE = parser.dlg
+ERR = err
+HDR_FILE =
+SCAN = DLGLexer
+PCCTS = /home/shared-folder/pccts
+ANTLR_H = $(PCCTS)/h
+BIN = $(PCCTS)/bin
+ANTLR = $(BIN)/antlr
+DLG = $(BIN)/dlg
+CFLAGS = -I. -I$(ANTLR_H) $(COTHER)
+AFLAGS = -CC -mrhoist off $(AOTHER)
+DFLAGS = -C2 -i -CC $(DOTHER)
+GRM = netgram.g
+SRC = netgram.cpp \
+      ToGraph.cpp \
+	netparser.cpp \
+	$(ANTLR_H)/AParser.cpp $(ANTLR_H)/DLexerBase.cpp $(ANTLR_H)/ATokenBuffer.cpp $(SCAN).cpp
+
+OBJ = netgram.o \
+      ToGraph.o \
+	netparser.o \
+	AParser.o DLexerBase.o ATokenBuffer.o $(SCAN).o
+
+ANTLR_SPAWN = netgram.cpp netparser.cpp \
+		netparser.h $(DLG_FILE) $(TOKENS)
+DLG_SPAWN = $(SCAN).cpp $(SCAN).h
+ifdef CXX
+CCC = $(CXX)
+endif
+
+ifndef CCC
+CCC = CC
+endif
+
+
+t : $(SRC) $(OBJ)
+	$(CCC) -o t $(CFLAGS) $(OBJ)
+
+netgram.o : $(TOKENS) $(SCAN).h netgram.cpp 
+	$(CCC) -c $(CFLAGS) -o netgram.o netgram.cpp
+
+ToGraph.o : $(TOKENS) $(SCAN).h ToGraph.cpp
+	$(CCC) -c $(CFLAGS) -o ToGraph.o ToGraph.cpp
+
+netparser.o : $(TOKENS) $(SCAN).h netparser.cpp netparser.h 
+	$(CCC) -c $(CFLAGS) -o netparser.o netparser.cpp
+
+$(SCAN).o : $(SCAN).cpp $(TOKENS)
+	$(CCC) -c $(CFLAGS) -o $(SCAN).o $(SCAN).cpp
+
+$(ANTLR_SPAWN) : $(GRM)
+	$(ANTLR) $(AFLAGS) $(GRM)
+
+$(DLG_SPAWN) : $(DLG_FILE)
+	$(DLG) $(DFLAGS) $(DLG_FILE)
+
+AParser.o : $(ANTLR_H)/AParser.cpp
+	$(CCC) -c $(CFLAGS) -o AParser.o $(ANTLR_H)/AParser.cpp
+
+ATokenBuffer.o : $(ANTLR_H)/ATokenBuffer.cpp
+	$(CCC) -c $(CFLAGS) -o ATokenBuffer.o $(ANTLR_H)/ATokenBuffer.cpp
+
+DLexerBase.o : $(ANTLR_H)/DLexerBase.cpp
+	$(CCC) -c $(CFLAGS) -o DLexerBase.o $(ANTLR_H)/DLexerBase.cpp
+
+clean:
+	rm -f *.o core t
+
+scrub: clean
+	rm -f $(ANTLR_SPAWN) $(DLG_SPAWN)
+

@@ -11,7 +11,7 @@
  lic:  
  lic: FLEXlm: v8.5b 
  lic: USER:   madiming             HOSTNAME: eda-server.localdomain 
- lic: HOSTID: 002219a9250f         PID:      7687 
+ lic: HOSTID: 002219a9250f         PID:      28840 
  lic: Using FLEXlm license file: 
  lic: /usr/local/flexlm/licenses/license.dat 
  lic: Checkout 1 hspice 
@@ -2502,8 +2502,8 @@
     output             0.00
            total cpu time          0.10 seconds
            total elapsed time         1 seconds
-               job started at  21:50:46 04/04/2010
-               job ended   at  21:50:46 04/04/2010
+               job started at  23:30:08 04/11/2010
+               job ended   at  23:30:08 04/11/2010
 
 
  lic: Release hspice token(s) 

@@ -120,6 +120,9 @@ public:
 		<BR><UL>				    b0 + b1 * s + b2 * s^2 + ... + bn * s^n</UL>
 	*/
 	void EvaluateSCoeff();
+	void UnMarkSCoefNodeTree(scoeffNode* P);
+	complex_t EvaluateSCoeffSensitivity(scoeffNode* P, char* symbName, int sensID);
+	complex_t EvaluateSCoeffSensitivityR(scoeffNode* P, int sensID);
 };
 
 #endif
